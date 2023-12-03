@@ -15,6 +15,7 @@ extern uint8_t is_master;
 #define _LAYER5 5
 #define _LAYER6 6
 #define _LAYER7 7
+#define _LAYER8 8
 
 enum custom_keycodes {
     QWERTY = SAFE_RANGE,
@@ -27,7 +28,8 @@ enum custom_keycodes {
 
 //Tap dance enums
 enum {
-  ALT_OSL1 = 1
+  ALT_OSL1 = 1,
+  ALT_OSL2 = 2
 };
 
 //Tap dance end
@@ -41,7 +43,7 @@ enum {
   KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T,                           KC_Y, KC_U, KC_I, KC_O, KC_P, KC_MINS, KC_LSFT, 
   KC_A, LALT_T(KC_S), LSFT_T(KC_D), LCTL_T(KC_F), KC_G,           KC_H, LCTL_T(KC_J), LSFT_T(KC_K), LALT_T(KC_L), KC_SCLN, RSFT_T(KC_QUOT), 
   KC_LCTL, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_ENT,                 KC_BTN1, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, 
-                    KC_LALT, KC_LGUI, TD(ALT_OSL1), KC_SPC,      KC_ENT, MO(2), KC_RALT, KC_RCTL),
+                    KC_LALT, KC_LGUI, TD(ALT_OSL1), KC_SPC,      KC_ENT, TD(ALT_OSL2), KC_RALT, KC_RCTL),
 
 [_LAYER1] = LAYOUT(
   KC_LALT, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,                     KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, 
@@ -90,8 +92,14 @@ enum {
   KC_TRNS, KC_NO, KC_HOME, KC_UP, KC_END, KC_NO,                                      KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, 
   KC_TRNS, KC_NO, KC_LEFT, KC_DOWN, KC_RGHT, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, 
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_TRNS, 
-                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS) 
+                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 
+[_LAYER8] = LAYOUT(
+  KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, 
+  KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                      KC_NO, KC_NO, KC_MS_U, KC_NO, KC_NO, KC_NO, 
+  KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                   KC_NO, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, KC_NO,
+  KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                  KC_NO, KC_NO, KC_WH_L, KC_WH_R, KC_NO, KC_WH_D, KC_TRNS, 
+                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS)
 };
 
 typedef struct {
@@ -162,8 +170,30 @@ void alt_reset (qk_tap_dance_state_t *state, void *user_data) {
   alttap_state.state = 0;
 }
 
+
+
+void alt2_finished (qk_tap_dance_state_t *state, void *user_data) {
+  alttap_state.state = cur_dance(state);
+  switch (alttap_state.state) {
+    case SINGLE_HOLD: layer_on(2); break;
+    case DOUBLE_HOLD: layer_on(8); break;
+  }
+}
+
+void alt2_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (alttap_state.state) {
+    case SINGLE_TAP: break;
+    case SINGLE_HOLD: layer_off(2); break;
+    case DOUBLE_TAP: break;
+    case DOUBLE_HOLD: layer_off(8); break;
+	  case TRIPLE_HOLD: break;
+  }
+  alttap_state.state = 0;
+}
+
 qk_tap_dance_action_t tap_dance_actions[] = {
-  [ALT_OSL1]     = ACTION_TAP_DANCE_FN_ADVANCED(NULL,alt_finished, alt_reset)
+  [ALT_OSL1]     = ACTION_TAP_DANCE_FN_ADVANCED(NULL,alt_finished, alt_reset),
+  [ALT_OSL2]     = ACTION_TAP_DANCE_FN_ADVANCED(NULL,alt2_finished, alt2_reset)
 };
 
 bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
