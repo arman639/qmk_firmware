@@ -6,7 +6,6 @@ extern uint8_t is_master;
 // achordion (similar to bilateral combinations but customizable)
 #include "features/achordion.h"
 
-
 #define _LAYER0 0
 #define _LAYER1 1
 #define _LAYER2 2
@@ -18,25 +17,21 @@ extern uint8_t is_master;
 #define _LAYER8 8
 
 enum custom_keycodes {
-    QWERTY = SAFE_RANGE,
-    LOWER,
-    RAISE,
-    ADJUST,
+  QWERTY = SAFE_RANGE,
+  LOWER,
+  RAISE,
+  ADJUST,
 	EXTRA,
 	ALT_TAB
 };
 
-//Tap dance enums
 enum {
   ALT_OSL1 = 1,
   ALT_OSL2 = 2
 };
-
 //Tap dance end
 
-//TD(ALT_OSL1)
-
- const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [_LAYER0] = LAYOUT(
   KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5,                           KC_6, KC_7, KC_8, KC_9, KC_0, KC_GRV, 
@@ -96,9 +91,9 @@ enum {
 
 [_LAYER8] = LAYOUT(
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, 
-  KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                      KC_NO, KC_NO, KC_MS_U, KC_NO, KC_NO, KC_NO, 
-  KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                   KC_NO, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, KC_NO,
-  KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                  KC_NO, KC_NO, KC_WH_L, KC_WH_R, KC_NO, KC_WH_D, KC_TRNS, 
+  KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                         KC_NO, KC_BTN1, KC_MS_U, KC_BTN2, KC_NO, KC_NO, 
+  KC_TRNS, KC_NO, KC_NO, KC_BTN2, KC_BTN1, KC_NO,                                         KC_BTN1, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, KC_NO,
+  KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                  KC_NO, KC_NO, KC_WH_L, KC_NO, KC_WH_R, KC_WH_D, KC_TRNS, 
                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS)
 };
 
@@ -120,9 +115,7 @@ int cur_dance (qk_tap_dance_state_t *state);
 void alt_finished (qk_tap_dance_state_t *state, void *user_data);
 void alt_reset (qk_tap_dance_state_t *state, void *user_data);
 
-void        set_keylog(uint16_t keycode, keyrecord_t *record);
-
-
+void set_keylog(uint16_t keycode, keyrecord_t *record);
 
 int cur_dance (qk_tap_dance_state_t *state) {
   if (state->count == 1) {
@@ -148,11 +141,11 @@ static tap alttap_state = {
 void alt_finished (qk_tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
-    case SINGLE_TAP: set_oneshot_layer(5, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
-    case SINGLE_HOLD: layer_on(1); break;
-    case DOUBLE_TAP: set_oneshot_layer(6, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
-    case DOUBLE_HOLD: layer_on(4); break;
-	case TRIPLE_HOLD: layer_on(7); break;
+    case SINGLE_TAP: set_oneshot_layer(_LAYER5, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
+    case SINGLE_HOLD: layer_on(_LAYER1); break;
+    case DOUBLE_TAP: set_oneshot_layer(_LAYER6, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
+    case DOUBLE_HOLD: layer_on(_LAYER4); break;
+	  case TRIPLE_HOLD: layer_on(_LAYER7); break;
     //Last case is for fast typing. Assuming your key is `f`:
     //For example, when typing the word `buf4fer`, and you want to make sure that you send `ff` and not `Esc`.
     //In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
@@ -162,10 +155,10 @@ void alt_finished (qk_tap_dance_state_t *state, void *user_data) {
 void alt_reset (qk_tap_dance_state_t *state, void *user_data) {
   switch (alttap_state.state) {
     case SINGLE_TAP: break;
-    case SINGLE_HOLD: layer_off(1); break;
+    case SINGLE_HOLD: layer_off(_LAYER1); break;
     case DOUBLE_TAP: break;
-    case DOUBLE_HOLD: layer_off(4); break;
-	case TRIPLE_HOLD: layer_off(7); break;
+    case DOUBLE_HOLD: layer_off(_LAYER4); break;
+	case TRIPLE_HOLD: layer_off(_LAYER7); break;
   }
   alttap_state.state = 0;
 }
@@ -175,17 +168,17 @@ void alt_reset (qk_tap_dance_state_t *state, void *user_data) {
 void alt2_finished (qk_tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
-    case SINGLE_HOLD: layer_on(2); break;
-    case DOUBLE_HOLD: layer_on(8); break;
+    case SINGLE_HOLD: layer_on(_LAYER2); break;
+    case DOUBLE_HOLD: layer_on(_LAYER8); break;
   }
 }
 
 void alt2_reset (qk_tap_dance_state_t *state, void *user_data) {
   switch (alttap_state.state) {
     case SINGLE_TAP: break;
-    case SINGLE_HOLD: layer_off(2); break;
+    case SINGLE_HOLD: layer_off(_LAYER2); break;
     case DOUBLE_TAP: break;
-    case DOUBLE_HOLD: layer_off(8); break;
+    case DOUBLE_HOLD: layer_off(_LAYER8); break;
 	  case TRIPLE_HOLD: break;
   }
   alttap_state.state = 0;
@@ -197,7 +190,6 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 };
 
 bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
-
   switch (keycode) {
     case KC_TRNS:
     case KC_NO:
@@ -218,8 +210,6 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-
-
 // uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 //     switch (keycode) {
 //         case SFT_T(KC_SPC):
@@ -229,8 +219,6 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
 //     }
 // }
 
-
-
 enum layers {
     _QWERTY,
     _LOWER,
@@ -239,7 +227,6 @@ enum layers {
     _UTIL,
 	_ALT_TAB
 };
- 
 
 bool is_alt_tab_active = false;
 
@@ -256,11 +243,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #ifdef OLED_ENABLE
  
 /* KEYBOARD PET START */
- 
-/* settings */
-#define MIN_WALK_SPEED 10
-#define MIN_RUN_SPEED 40
- 
+
 /* advanced settings */
 #define ANIM_FRAME_DURATION 200 // how long each frame lasts in ms
 #define ANIM_SIZE 96 // number of bytes in array. If you change sprites, minimize for adequate firmware size. max is 1024
@@ -275,12 +258,9 @@ uint8_t current_frame = 0;
 /* status variables */
 int current_wpm = 0;
 led_t led_usb_state;
- 
-
 
  
 static void print_logo_narrow(void) {
- 
     /* wpm counter */
     char wpm_str[8];
     oled_set_cursor(0,8);
@@ -345,13 +325,8 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
  
 bool oled_task_user(void) {
- 
-    /* KEYBOARD PET VARIABLES START */
- 
     current_wpm = get_current_wpm();
     led_usb_state = host_keyboard_led_state();
- 
-    /* KEYBOARD PET VARIABLES END */
  
     if (is_keyboard_master()) {
         print_status_narrow();
