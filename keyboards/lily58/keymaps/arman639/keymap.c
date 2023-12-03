@@ -37,7 +37,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5,                           KC_6, KC_7, KC_8, KC_9, KC_0, KC_GRV, 
   KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T,                           KC_Y, KC_U, KC_I, KC_O, KC_P, KC_MINS, KC_LSFT, 
   KC_A, LALT_T(KC_S), LSFT_T(KC_D), LCTL_T(KC_F), KC_G,           KC_H, LCTL_T(KC_J), LSFT_T(KC_K), LALT_T(KC_L), KC_SCLN, RSFT_T(KC_QUOT), 
-  KC_LCTL, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_ENT,                 KC_BTN1, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, 
+  KC_LCTL, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_BTN2,                 KC_BTN1, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, 
                     KC_LALT, KC_LGUI, TD(ALT_OSL1), KC_SPC,      KC_ENT, TD(ALT_OSL2), KC_RALT, KC_RCTL),
 
 [_LAYER1] = LAYOUT(
@@ -92,7 +92,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_LAYER8] = LAYOUT(
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, 
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                         KC_NO, KC_BTN1, KC_MS_U, KC_BTN2, KC_NO, KC_NO, 
-  KC_TRNS, KC_NO, KC_NO, KC_BTN2, KC_BTN1, KC_NO,                                         KC_BTN1, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, KC_NO,
+  KC_TRNS, KC_NO, KC_BTN2, KC_BTN3, KC_BTN1, KC_NO,                                         KC_BTN1, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, KC_NO,
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                  KC_NO, KC_NO, KC_WH_L, KC_NO, KC_WH_R, KC_WH_D, KC_TRNS, 
                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS)
 };
@@ -303,7 +303,7 @@ static void print_status_narrow(void) {
             break;
         case _RAISE:
             oled_write("Raise", false);
-            break;
+h            break;
         case _LOWER:
             oled_write("Lower", false);
             break;
