@@ -25,6 +25,29 @@ enum custom_keycodes {
 	ALT_TAB
 };
 
+// Mouse key speed and acceleration.
+#undef MOUSEKEY_DELAY
+#define MOUSEKEY_DELAY          0
+#undef MOUSEKEY_INTERVAL
+#define MOUSEKEY_INTERVAL       16
+#undef MOUSEKEY_WHEEL_DELAY
+#define MOUSEKEY_WHEEL_DELAY    0
+#undef MOUSEKEY_MAX_SPEED
+#define MOUSEKEY_MAX_SPEED      6
+#undef MOUSEKEY_TIME_TO_MAX
+#define MOUSEKEY_TIME_TO_MAX    64
+
+// Momentary mode. ACL buttons will take effect when pressed and deactivate on release.
+// KC_ACL0 < KC_ACL1 < unmodified < KC_ACL2
+#define MK_MOMENTARY_ACCEL
+
+// unfortunately the setting below doesnt work right now
+#undef MK_C_OFFSET_0
+#define MK_C_OFFSET_0 1
+#undef MK_C_INTERVAL_0
+#define MK_C_INTERVAL_0 16
+
+
 enum {
   ALT_OSL1 = 1,
   ALT_OSL2 = 2
@@ -92,7 +115,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_LAYER8] = LAYOUT(
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, 
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                         KC_NO, KC_BTN1, KC_MS_U, KC_BTN2, KC_NO, KC_NO, 
-  KC_TRNS, KC_NO, KC_BTN2, KC_BTN3, KC_BTN1, KC_NO,                                         KC_BTN1, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, KC_NO,
+  KC_TRNS, KC_ACL0, KC_BTN2, KC_BTN3, KC_BTN1, KC_NO,                                         KC_BTN1, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, KC_NO,
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                  KC_NO, KC_NO, KC_WH_L, KC_NO, KC_WH_R, KC_WH_D, KC_TRNS, 
                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS)
 };
@@ -220,12 +243,12 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
 // }
 
 enum layers {
-    _QWERTY,
-    _LOWER,
-    _RAISE,
-    _ADJUST,
-    _UTIL,
-	_ALT_TAB
+  _QWERTY,
+  _LOWER,
+  _RAISE,
+  _ADJUST,
+  _UTIL,
+  _ALT_TAB
 };
 
 bool is_alt_tab_active = false;
@@ -303,16 +326,16 @@ static void print_status_narrow(void) {
             break;
         case _RAISE:
             oled_write("Raise", false);
-h            break;
+            break;
         case _LOWER:
             oled_write("Lower", false);
             break;
-		case _UTIL:
-            oled_write("Util", false);
-            break;	
-		case _ALT_TAB:
-            oled_write("AltTab", false);
-            break;
+      case _UTIL:
+              oled_write("Util", false);
+              break;	
+      case _ALT_TAB:
+              oled_write("AltTab", false);
+              break;
     }
  
     /* caps lock */
@@ -347,48 +370,48 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	// #endif
 	
     switch (keycode) {
-        case QWERTY:
-            if (record->event.pressed) {
-                set_single_persistent_default_layer(_QWERTY);
-            }
-            return false;
-        case LOWER:
-            if (record->event.pressed) {
-                layer_on(_LOWER);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            } else {
-                layer_off(_LOWER);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            }
-            return false;
-        case RAISE:
-            if (record->event.pressed) {
-                layer_on(_RAISE);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            } else {
-                layer_off(_RAISE);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            }
-            return false;
-		case ADJUST:
-            if (record->event.pressed) {
-                layer_on(_ADJUST);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            } else {
-                layer_off(_ADJUST);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            }
-            return false;
-		case ALT_TAB: // super alt tab macro
-            if (record->event.pressed) {
-                if (!is_alt_tab_active) {
-                    is_alt_tab_active = true;
-                    register_code(KC_LALT);
-                }
-                register_code(KC_TAB);
-            } else {
-                unregister_code(KC_TAB);
-            }
+      case QWERTY:
+          if (record->event.pressed) {
+              set_single_persistent_default_layer(_QWERTY);
+          }
+          return false;
+      case LOWER:
+          if (record->event.pressed) {
+              layer_on(_LOWER);
+              update_tri_layer(_LOWER, _RAISE, _ADJUST);
+          } else {
+              layer_off(_LOWER);
+              update_tri_layer(_LOWER, _RAISE, _ADJUST);
+          }
+          return false;
+      case RAISE:
+          if (record->event.pressed) {
+              layer_on(_RAISE);
+              update_tri_layer(_LOWER, _RAISE, _ADJUST);
+          } else {
+              layer_off(_RAISE);
+              update_tri_layer(_LOWER, _RAISE, _ADJUST);
+          }
+          return false;
+      case ADJUST:
+              if (record->event.pressed) {
+                  layer_on(_ADJUST);
+                  update_tri_layer(_LOWER, _RAISE, _ADJUST);
+              } else {
+                  layer_off(_ADJUST);
+                  update_tri_layer(_LOWER, _RAISE, _ADJUST);
+              }
+              return false;
+      case ALT_TAB: // super alt tab macro
+              if (record->event.pressed) {
+                  if (!is_alt_tab_active) {
+                      is_alt_tab_active = true;
+                      register_code(KC_LALT);
+                  }
+                  register_code(KC_TAB);
+              } else {
+                  unregister_code(KC_TAB);
+              }
             break;
 			return false;
     }
