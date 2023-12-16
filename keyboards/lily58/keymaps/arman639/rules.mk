@@ -22,6 +22,6 @@ SRC +=  ./lib/rgb_state_reader.c \
         # ./lib/host_led_state_reader.c \
         # ./lib/timelogger.c \
 
-SRC += features/achordion.c
+# SRC += features/achordion.c
 
 DEFAULT_FOLDER = lily58/rev1
