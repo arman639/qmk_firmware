@@ -258,6 +258,10 @@ void turn_off_homerow(void) {
   unregister_code(KC_LCTL);
   unregister_code(KC_LALT);
   is_oneshot_active = false;
+
+  os_shft_state = os_untouched;
+  os_ctrl_state = os_untouched;
+  os_alt_state = os_untouched;
 }
 
 bool is_oneshot_ignored_key(uint16_t keycode) {
@@ -443,19 +447,17 @@ void update_oneshot2(
         } else {
             *state = os_up_used;
             unregister_code(mod);
-        }
 
-        bool is_all_unqueued = is_all_modifiers_unqueued();
-        if (is_all_unqueued) {
-          *state = os_untouched;
-          turn_off_homerow();
+            bool is_all_unqueued = is_all_modifiers_unqueued();
+            if (is_all_unqueued) {
+              // *state = os_untouched;
+              turn_off_homerow();
+            }
         }
     }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    ignoreOneshot = false;
-
     if (is_oneshot_active) {
       // callum
       update_oneshot2(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
