@@ -140,6 +140,8 @@ typedef struct {
   int state;
 } tap;
 
+bool is_oneshot_active = false; // callum
+
 enum {
   SINGLE_TAP = 1,
   SINGLE_HOLD = 2,
@@ -179,7 +181,7 @@ static tap alttap_state = {
 void alt_finished (qk_tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
-    case SINGLE_TAP: layer_on(_LAYER5); break;
+    case SINGLE_TAP: layer_on(_LAYER5); is_oneshot_active = true; break;
     case SINGLE_HOLD: layer_on(_SYMB); break;
     case DOUBLE_TAP: set_oneshot_layer(_LAYER6, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
     case DOUBLE_HOLD: layer_on(_NUMFUNC); break;
@@ -206,7 +208,7 @@ void alt_reset (qk_tap_dance_state_t *state, void *user_data) {
 void alt2_finished (qk_tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
-    case SINGLE_TAP: layer_on(_HOMERIGHT); break;
+    case SINGLE_TAP: layer_on(_HOMERIGHT); is_oneshot_active = true; break;
     case SINGLE_HOLD: layer_on(_NAV); break;
     case DOUBLE_HOLD: layer_on(_LAYER8); break;
   }
@@ -227,6 +229,55 @@ qk_tap_dance_action_t tap_dance_actions[] = {
   [ALT_OSL1]     = ACTION_TAP_DANCE_FN_ADVANCED(NULL,alt_finished, alt_reset),
   [ALT_OSL2]     = ACTION_TAP_DANCE_FN_ADVANCED(NULL,alt2_finished, alt2_reset)
 };
+
+//callum
+bool ignoreOneshot = false;
+
+bool is_all_modifiers_unqueued(void) {
+  bool atleastOneUpUsed = (os_shft_state == os_up_used ||
+      os_ctrl_state == os_up_used ||
+      os_alt_state == os_up_used);
+  
+  bool noPressed = (os_shft_state != os_pressed ||
+      os_ctrl_state != os_pressed ||
+      os_alt_state != os_pressed);
+
+  return atleastOneUpUsed && noPressed;
+}
+
+bool is_atleast_one_pressed(void) {
+  return (os_shft_state == os_pressed ||
+      os_ctrl_state == os_pressed ||
+      os_alt_state == os_pressed);
+}
+
+void turn_off_homerow(void) {
+  layer_off(_LAYER5);
+  layer_off(_HOMERIGHT);
+  unregister_code(KC_LSFT);
+  unregister_code(KC_LCTL);
+  unregister_code(KC_LALT);
+  is_oneshot_active = false;
+}
+
+bool is_oneshot_ignored_key(uint16_t keycode) {
+    switch (keycode) {
+    case OS_SHFT:
+    case OS_CTRL:
+    case OS_ALT:
+        return true;
+    default:
+        return false;
+    }
+}
+
+void matrix_scan_user(void) {
+    if (ignoreOneshot) {
+        turn_off_homerow();
+        ignoreOneshot = false;
+    }
+}
+// end callum
 
 bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
@@ -378,26 +429,6 @@ bool oled_task_user(void) {
  
 #endif
  
-bool is_all_modifiers_unqueued(void) {
-  bool atleastOneUpUsed = (os_shft_state == os_up_used ||
-      os_ctrl_state == os_up_used ||
-      os_alt_state == os_up_used);
-  
-  bool noPressed = (os_shft_state != os_pressed ||
-      os_ctrl_state != os_pressed ||
-      os_alt_state != os_pressed);
-
-  return atleastOneUpUsed && noPressed;
-}
-
-void turn_off_homerow(void) {
-  layer_off(_LAYER5);
-  layer_off(_HOMERIGHT);
-  unregister_code(KC_LSFT);
-  unregister_code(KC_LCTL);
-  unregister_code(KC_LALT);
-}
-
 void update_oneshot2(
     oneshot_state *state,
     uint16_t mod,
@@ -423,26 +454,19 @@ void update_oneshot2(
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-	
+    if (is_oneshot_active) {
+      // callum
+      update_oneshot2(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
+      update_oneshot2(&os_ctrl_state, KC_LCTL, OS_CTRL, keycode, record);
+      update_oneshot2(&os_alt_state, KC_LALT, OS_ALT, keycode, record);
+
+      if (!is_oneshot_ignored_key(keycode) && !is_atleast_one_pressed()) {
+        ignoreOneshot = true;
+        return true;
+      }
+    }
+  
     switch (keycode) {
-      case OS_SHFT:
-        update_oneshot2(
-            &os_shft_state, KC_LSFT, OS_SHFT,
-            keycode, record
-        );
-        return false;
-      case OS_CTRL:
-        update_oneshot2(
-            &os_ctrl_state, KC_LCTL, OS_CTRL,
-            keycode, record
-        );
-        return false;
-      case OS_ALT:
-        update_oneshot2(
-            &os_alt_state, KC_LALT, OS_ALT,
-            keycode, record
-        );
-        return false;
       case QWERTY:
           if (record->event.pressed) {
               set_single_persistent_default_layer(_QWERTY);
@@ -489,27 +513,4 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			return false;
     }
     return true;
-}
-
-//callum
-bool is_oneshot_ignored_key(uint16_t keycode) {
-    switch (keycode) {
-    case OS_SHFT:
-    case OS_CTRL:
-    case OS_ALT:
-        return true;
-    default:
-        return false;
-    }
-}
-
-bool is_oneshot_cancel_key(uint16_t keycode) {
-  return false;
-    // switch (keycode) {
-    // case ALT_OSL1:
-    // case ALT_OSL2:
-    //     return true;
-    // default:
-    //     return false;
-    // }
 }
