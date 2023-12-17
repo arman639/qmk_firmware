@@ -454,6 +454,8 @@ void update_oneshot2(
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    ignoreOneshot = false;
+
     if (is_oneshot_active) {
       // callum
       update_oneshot2(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
