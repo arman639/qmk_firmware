@@ -361,21 +361,7 @@ uint8_t current_frame = 0;
 int current_wpm = 0;
 led_t led_usb_state;
 
-
-static void print_logo_narrow(void) {
-    /* wpm counter */
-    char wpm_str[8];
-    oled_set_cursor(0,8);
-    sprintf(wpm_str, " %03d", current_wpm);
-    oled_write(wpm_str, false);
-
-    oled_set_cursor(0,9);
-    oled_write(" wpm", false);
-}
-
 static void print_status_narrow(void) {
-
-
     oled_set_cursor(0,3);
 
     switch (get_highest_layer(default_layer_state)) {
@@ -433,7 +419,7 @@ bool oled_task_user(void) {
     if (is_keyboard_master()) {
         print_status_narrow();
     } else {
-        print_logo_narrow();
+        // do not display anything
     }
 
 	return false;
