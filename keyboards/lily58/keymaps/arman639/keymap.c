@@ -8,7 +8,7 @@ extern uint8_t is_master;
 #define _NAV 2
 #define _HOMERIGHT 3
 #define _NUMFUNC 4
-#define _LAYER5 5
+#define _ONESHOT 5
 #define _LAYER6 6
 #define _LAYER7 7
 #define _MOUSE 8
@@ -77,7 +77,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LCTL, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_BTN2,                 KC_BTN1, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT,
                     KC_LALT, KC_LGUI, TD(ALT_OSL1), LT(_NUMFUNC, KC_SPC),      OSM(MOD_RSFT), TD(ALT_OSL2), KC_RALT, KC_RCTL),
 
-[_LAYER5] = LAYOUT(
+[_ONESHOT] = LAYOUT(
   KC_NO, KC_NO, LCTL(KC_PSCR), KC_PSCR, KC_NO, KC_NO,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   LGUI(KC_DOWN), LGUI(KC_1), LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5),          KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   KC_ESC, LCTL(KC_HOME), OS_ALT, OS_SHFT, OS_CTRL, KC_NO,                               KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
@@ -102,7 +102,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_ESC, KC_NO, KC_NO, KC_NO, KC_BRIU, KC_BRID,                                KC_MRWD, KC_MFFD, KC_MPLY, KC_MUTE, KC_VOLD, KC_VOLU,
   KC_TAB, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                    KC_NO, KC_HOME, KC_UP, KC_END, KC_DEL, KC_ENT,
   KC_LSFT, KC_NO, KC_LALT, KC_LSFT, KC_LCTL, KC_NO,                             KC_PGUP, KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_WH_U,
-  KC_LCTL, LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_NO, KC_NO,        KC_SCRL, KC_PGDN, LCTL(KC_PGUP), LCTL(KC_PGDN), KC_ENT, RGUI(KC_T), KC_WH_D,
+  KC_LCTL, LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_NO, KC_NO,        KC_SCRL, KC_PGDN, LCTL(KC_PGUP), KC_NO, LCTL(KC_PGDN), RGUI(KC_T), KC_WH_D,
                               KC_TRNS, KC_TRNS, MO(3), KC_TRNS,                  KC_ENT, KC_TRNS, KC_TRNS, KC_TRNS),
 
 
@@ -189,7 +189,7 @@ static tap alttap_state = {
 void alt_finished (qk_tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
-    case SINGLE_TAP: layer_on(_LAYER5); is_oneshot_active = true; break;
+    case SINGLE_TAP: layer_on(_ONESHOT); is_oneshot_active = true; break;
     case SINGLE_HOLD: layer_on(_SYMB); break;
     case DOUBLE_TAP: set_oneshot_layer(_LAYER6, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
     case DOUBLE_HOLD: layer_on(_NUMFUNC); break;
@@ -260,7 +260,7 @@ bool is_atleast_one_pressed(void) {
 }
 
 void turn_off_homerow(void) {
-  layer_off(_LAYER5);
+  layer_off(_ONESHOT);
   layer_off(_HOMERIGHT);
   unregister_code(KC_LSFT);
   unregister_code(KC_LCTL);
