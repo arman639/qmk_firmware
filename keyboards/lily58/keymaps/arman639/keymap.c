@@ -1,8 +1,8 @@
 #include QMK_KEYBOARD_H
 #include <stdio.h>
 #include "wpm.h"
-extern uint8_t is_master;
 
+extern uint8_t is_master;
 #define _BASE 0
 #define _SYMB 1
 #define _NAV 2
@@ -14,19 +14,18 @@ extern uint8_t is_master;
 #define _MOUSE 8
 #define _DISABLE 9
 #define _MACRO 10
-
 enum custom_keycodes {
-  QWERTY = SAFE_RANGE,
-  LOWER,
-  RAISE,
-  ADJUST,
-	EXTRAe,
-	ALT_TAB,
+    QWERTY = SAFE_RANGE,
+    LOWER,
+    RAISE,
+    ADJUST,
+    EXTRAe,
+    ALT_TAB,
 
-  // Custom oneshot mod implementation with no timers.
-  OS_SHFT,
-  OS_CTRL,
-  OS_ALT,
+    // Custom oneshot mod implementation with no timers.
+    OS_SHFT,
+    OS_CTRL,
+    OS_ALT,
 };
 
 // callum
@@ -421,7 +420,6 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 bool oled_task_user(void) {
-    current_wpm = get_current_wpm();
     led_usb_state = host_keyboard_led_state();
 
     if (is_keyboard_master()) {
