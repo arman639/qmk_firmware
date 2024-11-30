@@ -1,6 +1,15 @@
+#include <stdbool.h>
+#include <stdint.h>
+#include "action_layer.h"
+#include "action_util.h"
+#include "quantum_keycodes.h"
+#include "oled_driver.h"
+#include "quantum.h"
+#include "matrix.h"
+#include "action.h"
+#include "process_tap_dance.h"
+
 #include QMK_KEYBOARD_H
-#include <stdio.h>
-#include "wpm.h"
 
 extern uint8_t is_master;
 #define _BASE 0
@@ -157,22 +166,23 @@ typedef struct {
 
 bool is_oneshot_active = false; // callum
 
-enum {
+typedef enum {
+  TD_NONE = 0,
   SINGLE_TAP = 1,
   SINGLE_HOLD = 2,
   DOUBLE_TAP = 3,
   DOUBLE_HOLD = 4,
   TRIPLE_TAP = 5,
   TRIPLE_HOLD = 6
-};
+} td_state_t;
 
-int cur_dance (qk_tap_dance_state_t *state);
-void alt_finished (qk_tap_dance_state_t *state, void *user_data);
-void alt_reset (qk_tap_dance_state_t *state, void *user_data);
+td_state_t cur_dance (tap_dance_state_t *state);
+void alt_finished (tap_dance_state_t *state, void *user_data);
+void alt_reset (tap_dance_state_t *state, void *user_data);
 
 void set_keylog(uint16_t keycode, keyrecord_t *record);
 
-int cur_dance (qk_tap_dance_state_t *state) {
+td_state_t cur_dance (tap_dance_state_t *state) {
   if (state->count == 1) {
     if (state->pressed) return SINGLE_HOLD;
     else return SINGLE_TAP;
@@ -188,61 +198,70 @@ int cur_dance (qk_tap_dance_state_t *state) {
   else return 8;
 }
 
-static tap alttap_state = {
+typedef struct {
+    bool is_press_action;
+    td_state_t state;
+} td_tap_t;
+
+static td_tap_t alttap_state = {
   .is_press_action = true,
-  .state = 0
+  .state = TD_NONE
 };
 
-void alt_finished (qk_tap_dance_state_t *state, void *user_data) {
+void alt_finished (tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
     case SINGLE_TAP: layer_on(_ONESHOT); is_oneshot_active = true; break;
     case SINGLE_HOLD: layer_on(_SYMB); break;
     case DOUBLE_TAP: set_oneshot_layer(_LAYER6, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
     case DOUBLE_HOLD: layer_on(_NUMFUNC); break;
-	  case TRIPLE_HOLD: layer_on(_LAYER7); break;
+	case TRIPLE_HOLD: layer_on(_LAYER7); break;
+    default: break;
     //Last case is for fast typing. Assuming your key is `f`:
     //For example, when typing the word `buf4fer`, and you want to make sure that you send `ff` and not `Esc`.
     //In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
   }
 }
 
-void alt_reset (qk_tap_dance_state_t *state, void *user_data) {
+void alt_reset (tap_dance_state_t *state, void *user_data) {
   switch (alttap_state.state) {
     case SINGLE_TAP: break;
     case SINGLE_HOLD: layer_off(_SYMB); break;
     case DOUBLE_TAP: break;
     case DOUBLE_HOLD: layer_off(_NUMFUNC); break;
 	case TRIPLE_HOLD: layer_off(_LAYER7); break;
+    default: break;
   }
   alttap_state.state = 0;
 }
 
 
 
-void alt2_finished (qk_tap_dance_state_t *state, void *user_data) {
+void alt2_finished (tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
     case SINGLE_TAP: layer_on(_HOMERIGHT); is_oneshot_active = true; break;
     case SINGLE_HOLD: layer_on(_NAV); break;
     case DOUBLE_HOLD: layer_on(_MOUSE); break;
+    default: break;
   }
 }
 
-void alt2_reset (qk_tap_dance_state_t *state, void *user_data) {
+void alt2_reset (tap_dance_state_t *state, void *user_data) {
   switch (alttap_state.state) {
     case SINGLE_TAP: break;
     case SINGLE_HOLD: layer_off(_NAV); break;
     case DOUBLE_TAP: break;
     case DOUBLE_HOLD: layer_off(_MOUSE); break;
-	  case TRIPLE_HOLD: break;
+    case TRIPLE_HOLD: break;
+    default: break;
   }
   alttap_state.state = 0;
 }
 
-qk_tap_dance_action_t tap_dance_actions[] = {
-  [ALT_OSL1]     = ACTION_TAP_DANCE_FN_ADVANCED(NULL,alt_finished, alt_reset),
-  [ALT_OSL2]     = ACTION_TAP_DANCE_FN_ADVANCED(NULL,alt2_finished, alt2_reset)
+tap_dance_action_t  tap_dance_actions[] = {
+  [ALT_OSL1] = ACTION_TAP_DANCE_FN_ADVANCED(NULL,alt_finished, alt_reset),
+  [ALT_OSL2] = ACTION_TAP_DANCE_FN_ADVANCED(NULL,alt2_finished, alt2_reset)
 };
 
 //callum

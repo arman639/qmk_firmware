@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // #define REPORT_MODS_SEPARATELY
 
-#define DOUBLE_REPORT
+// #define DOUBLE_REPORT
 
 // Underglow
 /*

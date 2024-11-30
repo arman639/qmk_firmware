@@ -291,31 +291,12 @@ void send_6kro_report(void) {
 #else
     static report_keyboard_t last_report;
 
-// #ifdef REPORT_MODS_SEPARATELY
-//     if (last_report.mods != keyboard_report->mods) {
-//         // Build a keyboard report that only updates the mods
-//         report_keyboard_t mod_report;
-//         memcpy(&mod_report, &last_report, sizeof(report_keyboard_t));
-//         mod_report.mods = keyboard_report->mods;
-
-//         host_keyboard_send(&mod_report);
-//         memcpy(&last_report, &mod_report, sizeof(report_keyboard_t));
-//     }
-// #endif
-
-#ifndef PROTOCOL_VUSB
     /* Only send the report if there are changes to propagate to the host. */
-    if (memcmp(&last_report, keyboard_report, sizeof(report_keyboard_t)) != 0)
-#endif
-    {
+    if (memcmp(keyboard_report, &last_report, sizeof(report_keyboard_t)) != 0) {
         memcpy(&last_report, keyboard_report, sizeof(report_keyboard_t));
         host_keyboard_send(keyboard_report);
-
-#ifdef DOUBLE_REPORT
-        memcpy(keyboard_report, &last_report, sizeof(report_keyboard_t)); // host_keyboard_send() sometimes modifies keyboard_report to handle protocol details, so restore the original from last_report
-        host_keyboard_send(keyboard_report);
-#endif
     }
+#endif
 }
 
 #ifdef NKRO_ENABLE
