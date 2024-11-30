@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "action_layer.h"
 #include "action_util.h"
+#include "keycodes.h"
 #include "quantum_keycodes.h"
 #include "oled_driver.h"
 #include "quantum.h"
@@ -89,7 +90,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_NO, KC_NO, LCTL(KC_PSCR), KC_PSCR, KC_NO, KC_NO,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   LGUI(KC_DOWN), LGUI(KC_1), LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5),          KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   KC_ESC, LCTL(KC_HOME), OS_ALT, OS_SHFT, OS_CTRL, KC_NO,                               KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-  KC_NO, LCTL(KC_END), KC_INS, KC_CAPS, LSFT(KC_F10), KC_NO, KC_NO,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+  OSM(MOD_RCTL|MOD_RSFT), LCTL(KC_END), KC_INS, KC_CAPS, LSFT(KC_F10), KC_NO, KC_NO,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
                                         KC_NO, KC_NO, KC_NO, KC_TRNS,                   KC_TRNS, KC_NO, KC_TRNS, KC_TRNS),
 
 [_HOMERIGHT] = LAYOUT(
@@ -111,8 +112,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                    KC_NO, KC_HOME, KC_UP, KC_END, KC_DEL, KC_ENT,
   KC_LSFT, KC_NO, KC_LALT, KC_LSFT, KC_LCTL, KC_NO,                             KC_PGUP, KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_WH_U,
   KC_LCTL, LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_NO, KC_NO,        KC_SCRL, KC_PGDN, LCTL(KC_PGUP), KC_NO, LCTL(KC_PGDN), RGUI(KC_T), KC_WH_D,
-                              KC_TRNS, KC_TRNS, MO(3), KC_TRNS,                  KC_ENT, KC_TRNS, KC_TRNS, KC_TRNS),
-
+                              KC_TRNS, KC_TRNS, MO(3), KC_TAB,                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 
 [_NUMFUNC] = LAYOUT(
   KC_TRNS, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,                                         KC_NO, KC_PSLS, KC_PAST, KC_PMNS, KC_NO, KC_NUM,
@@ -120,7 +120,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LSFT, KC_WH_U, KC_F10, KC_F11, KC_F12, KC_PGUP,                                  KC_NO, KC_P4, KC_P5, KC_P6, KC_BSPC, KC_ESC,
   KC_LCTL, KC_WH_D, LALT(KC_LEFT), LALT(KC_RGHT), LALT(KC_F5), KC_PGDN, LGUI(KC_PGUP),      KC_TRNS, KC_NO, KC_P1, KC_P2, KC_P3, KC_PEQL, KC_RCTL,
                     KC_TRNS, KC_TRNS, KC_NO, KC_TRNS,                                  KC_ENT, KC_P0, KC_PDOT, KC_RALT),
-
 
 [_LAYER6] = LAYOUT(
   KC_NO, KC_NO, KC_NO, KC_CALC, LALT(KC_F4), LCTL(KC_F5),                             KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
