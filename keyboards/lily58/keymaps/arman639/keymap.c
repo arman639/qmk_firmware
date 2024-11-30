@@ -7,7 +7,6 @@
 #include "quantum.h"
 #include "matrix.h"
 #include "action.h"
-#include "process_tap_dance.h"
 
 #include QMK_KEYBOARD_H
 
@@ -23,25 +22,26 @@ extern uint8_t is_master;
 #define _MOUSE 8
 #define _DISABLE 9
 #define _MACRO 10
-enum custom_keycodes {
-    QWERTY = SAFE_RANGE,
-    LOWER,
-    RAISE,
-    ADJUST,
-    EXTRAe,
-    ALT_TAB,
 
-    // Custom oneshot mod implementation with no timers.
-    OS_SHFT,
-    OS_CTRL,
-    OS_ALT,
+enum custom_keycodes {
+  QWERTY = SAFE_RANGE,
+  LOWER,
+  RAISE,
+  ADJUST,
+  EXTRAe,
+  ALT_TAB,
+
+  // Custom oneshot mod implementation with no timers.
+  OS_SHFT,
+  OS_CTRL,
+  OS_ALT,
 };
 
 // callum
 typedef enum oneshot_state {
-    os_untouched,
-    os_pressed,
-    os_up_used,
+	os_untouched,
+	os_pressed,
+	os_up_used,
 } oneshot_state;
 
 oneshot_state os_shft_state = os_untouched;
@@ -69,7 +69,6 @@ oneshot_state os_alt_state = os_untouched;
 #define MK_C_OFFSET_0 1
 #undef MK_C_INTERVAL_0
 #define MK_C_INTERVAL_0 16
-
 
 enum {
   ALT_OSL1 = 1,
@@ -217,9 +216,6 @@ void alt_finished (tap_dance_state_t *state, void *user_data) {
     case DOUBLE_HOLD: layer_on(_NUMFUNC); break;
 	case TRIPLE_HOLD: layer_on(_LAYER7); break;
     default: break;
-    //Last case is for fast typing. Assuming your key is `f`:
-    //For example, when typing the word `buf4fer`, and you want to make sure that you send `ff` and not `Esc`.
-    //In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
   }
 }
 
@@ -234,8 +230,6 @@ void alt_reset (tap_dance_state_t *state, void *user_data) {
   }
   alttap_state.state = 0;
 }
-
-
 
 void alt2_finished (tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
@@ -269,20 +263,20 @@ bool ignoreOneshot = false;
 
 bool is_all_modifiers_unqueued(void) {
   bool atleastOneUpUsed = (os_shft_state == os_up_used ||
-      os_ctrl_state == os_up_used ||
-      os_alt_state == os_up_used);
+    os_ctrl_state == os_up_used ||
+    os_alt_state == os_up_used);
 
   bool noPressed = (os_shft_state != os_pressed ||
-      os_ctrl_state != os_pressed ||
-      os_alt_state != os_pressed);
+    os_ctrl_state != os_pressed ||
+    os_alt_state != os_pressed);
 
   return atleastOneUpUsed && noPressed;
 }
 
 bool is_atleast_one_pressed(void) {
   return (os_shft_state == os_pressed ||
-      os_ctrl_state == os_pressed ||
-      os_alt_state == os_pressed);
+    os_ctrl_state == os_pressed ||
+    os_alt_state == os_pressed);
 }
 
 void turn_off_homerow(void) {
@@ -299,21 +293,21 @@ void turn_off_homerow(void) {
 }
 
 bool is_oneshot_ignored_key(uint16_t keycode) {
-    switch (keycode) {
-    case OS_SHFT:
-    case OS_CTRL:
-    case OS_ALT:
-        return true;
-    default:
-        return false;
-    }
+  switch (keycode) {
+  case OS_SHFT:
+  case OS_CTRL:
+  case OS_ALT:
+      return true;
+  default:
+      return false;
+  }
 }
 
 void matrix_scan_user(void) {
-    if (ignoreOneshot) {
-        turn_off_homerow();
-        ignoreOneshot = false;
-    }
+  if (ignoreOneshot) {
+    turn_off_homerow();
+    ignoreOneshot = false;
+  }
 }
 // end callum
 
@@ -337,15 +331,6 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
   }
   return true;
 }
-
-// uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
-//     switch (keycode) {
-//         case SFT_T(KC_SPC):
-//             return TAPPING_TERM + 1250;
-//         default:
-//             return TAPPING_TERM;
-//     }
-// }
 
 enum layers {
   _QWERTY,
@@ -388,152 +373,152 @@ int current_wpm = 0;
 led_t led_usb_state;
 
 static void print_status_narrow(void) {
-    oled_set_cursor(0,3);
+  oled_set_cursor(0,3);
 
-    switch (get_highest_layer(default_layer_state)) {
-        case _QWERTY:
-            oled_write("QWRTY", false);
-            break;
-        case _ADJUST:
-            oled_write("ADJUST", false);
-            break;
-        default:
-            oled_write("UNDEF", false);
-    }
+  switch (get_highest_layer(default_layer_state)) {
+    case _QWERTY:
+      oled_write("QWRTY", false);
+      break;
+    case _ADJUST:
+      oled_write("ADJUST", false);
+      break;
+    default:
+      oled_write("UNDEF", false);
+  }
 
-    oled_set_cursor(0,5);
+  oled_set_cursor(0,5);
 
-    /* Print current layer */
-    oled_write("LAYER", false);
+  /* Print current layer */
+  oled_write("LAYER", false);
 
-    oled_set_cursor(0,6);
+  oled_set_cursor(0,6);
 
-    switch (get_highest_layer(layer_state)) {
-        case _QWERTY:
-            oled_write("Base ", false);
-            break;
-        case _ADJUST:
-            oled_write("Adjst", false);
-            break;
-        case _RAISE:
-            oled_write("Raise", false);
-            break;
-        case _LOWER:
-            oled_write("Lower", false);
-            break;
-      case _UTIL:
-              oled_write("Util", false);
-              break;
-      case _ALT_TAB:
-              oled_write("AltTab", false);
-              break;
-    }
+  switch (get_highest_layer(layer_state)) {
+    case _QWERTY:
+      oled_write("Base ", false);
+      break;
+    case _ADJUST:
+      oled_write("Adjst", false);
+      break;
+    case _RAISE:
+      oled_write("Raise", false);
+      break;
+    case _LOWER:
+      oled_write("Lower", false);
+      break;
+    case _UTIL:
+      oled_write("Util", false);
+      break;
+    case _ALT_TAB:
+      oled_write("AltTab", false);
+      break;
+  }
 
-    /* caps lock */
-    oled_set_cursor(0,8);
-    oled_write("Caps", led_usb_state.caps_lock);
+  /* caps lock */
+  oled_set_cursor(0,8);
+  oled_write("Caps", led_usb_state.caps_lock);
 }
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-    return OLED_ROTATION_270;
+  return OLED_ROTATION_270;
 }
 
 bool oled_task_user(void) {
-    led_usb_state = host_keyboard_led_state();
+  led_usb_state = host_keyboard_led_state();
 
-    if (is_keyboard_master()) {
-        print_status_narrow();
-    } else {
-        // do not display anything
-    }
+  if (is_keyboard_master()) {
+      print_status_narrow();
+  } else {
+      // do not display anything
+  }
 
-	return false;
+  return false;
 }
 
 #endif
 
 void update_oneshot2(
-    oneshot_state *state,
-    uint16_t mod,
-    uint16_t trigger,
-    uint16_t keycode,
-    keyrecord_t *record
+  oneshot_state *state,
+  uint16_t mod,
+  uint16_t trigger,
+  uint16_t keycode,
+  keyrecord_t *record
 ) {
-    if (keycode == trigger) {
-        if (record->event.pressed) {
-            *state = os_pressed;
-            register_code(mod);
-        } else {
-            *state = os_up_used;
-            unregister_code(mod);
+  if (keycode == trigger) {
+    if (record->event.pressed) {
+      *state = os_pressed;
+      register_code(mod);
+    } else {
+      *state = os_up_used;
+      unregister_code(mod);
 
-            bool is_all_unqueued = is_all_modifiers_unqueued();
-            if (is_all_unqueued) {
-              // *state = os_untouched;
-              turn_off_homerow();
-            }
-        }
+      bool is_all_unqueued = is_all_modifiers_unqueued();
+      if (is_all_unqueued) {
+        // *state = os_untouched;
+        turn_off_homerow();
+      }
     }
+  }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (is_oneshot_active) {
-      // callum
-      update_oneshot2(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
-      update_oneshot2(&os_ctrl_state, KC_LCTL, OS_CTRL, keycode, record);
-      update_oneshot2(&os_alt_state, KC_LALT, OS_ALT, keycode, record);
+  if (is_oneshot_active) {
+    // callum
+    update_oneshot2(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
+    update_oneshot2(&os_ctrl_state, KC_LCTL, OS_CTRL, keycode, record);
+    update_oneshot2(&os_alt_state, KC_LALT, OS_ALT, keycode, record);
 
-      if (!is_oneshot_ignored_key(keycode) && !is_atleast_one_pressed()) {
-        ignoreOneshot = true;
-        return true;
+    if (!is_oneshot_ignored_key(keycode) && !is_atleast_one_pressed()) {
+      ignoreOneshot = true;
+      return true;
+    }
+  }
+
+  switch (keycode) {
+  case QWERTY:
+    if (record->event.pressed) {
+      set_single_persistent_default_layer(_QWERTY);
+    }
+    return false;
+  case LOWER:
+    if (record->event.pressed) {
+      layer_on(_LOWER);
+      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+    } else {
+      layer_off(_LOWER);
+      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+    }
+    return false;
+  case RAISE:
+    if (record->event.pressed) {
+      layer_on(_RAISE);
+      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+    } else {
+      layer_off(_RAISE);
+      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+    }
+    return false;
+  case ADJUST:
+    if (record->event.pressed) {
+      layer_on(_ADJUST);
+      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+    } else {
+      layer_off(_ADJUST);
+      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+    }
+    return false;
+  case ALT_TAB: // super alt tab macro
+    if (record->event.pressed) {
+      if (!is_alt_tab_active) {
+        is_alt_tab_active = true;
+        register_code(KC_LALT);
       }
+      register_code(KC_TAB);
+    } else {
+      unregister_code(KC_TAB);
     }
-
-    switch (keycode) {
-      case QWERTY:
-          if (record->event.pressed) {
-              set_single_persistent_default_layer(_QWERTY);
-          }
-          return false;
-      case LOWER:
-          if (record->event.pressed) {
-              layer_on(_LOWER);
-              update_tri_layer(_LOWER, _RAISE, _ADJUST);
-          } else {
-              layer_off(_LOWER);
-              update_tri_layer(_LOWER, _RAISE, _ADJUST);
-          }
-          return false;
-      case RAISE:
-          if (record->event.pressed) {
-              layer_on(_RAISE);
-              update_tri_layer(_LOWER, _RAISE, _ADJUST);
-          } else {
-              layer_off(_RAISE);
-              update_tri_layer(_LOWER, _RAISE, _ADJUST);
-          }
-          return false;
-      case ADJUST:
-              if (record->event.pressed) {
-                  layer_on(_ADJUST);
-                  update_tri_layer(_LOWER, _RAISE, _ADJUST);
-              } else {
-                  layer_off(_ADJUST);
-                  update_tri_layer(_LOWER, _RAISE, _ADJUST);
-              }
-              return false;
-      case ALT_TAB: // super alt tab macro
-              if (record->event.pressed) {
-                  if (!is_alt_tab_active) {
-                      is_alt_tab_active = true;
-                      register_code(KC_LALT);
-                  }
-                  register_code(KC_TAB);
-              } else {
-                  unregister_code(KC_TAB);
-              }
-            break;
-			return false;
-    }
-    return true;
+    break;
+    return false;
+  }
+  return true;
 }
