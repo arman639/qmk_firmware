@@ -150,8 +150,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                   KC_NO, KC_NO, KC_NO, KC_NO,                                 KC_NO, KC_NO, KC_NO, KC_NO),
 
 [_MACRO] = LAYOUT(
-  KC_NO, KC_NO, KC_NO, DM_REC1, DM_REC2, KC_NO,                               KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-  KC_NO, KC_NO, KC_NO, DM_PLY1, DM_PLY2, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+  KC_NO, KC_NO, KC_NO, DM_REC2, DM_PLY2, KC_NO,                               KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+  KC_NO, KC_NO, KC_NO, DM_REC1, DM_PLY1, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                            KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
                   KC_NO, KC_NO, KC_NO, KC_NO,                                 KC_NO, KC_NO, KC_NO, KC_NO)
@@ -351,6 +351,20 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return state;
 }
 
+// dynamic macro hooks
+bool is_recording_macro = false;
+
+bool dynamic_macro_record_start_user(int8_t direction) {
+  is_recording_macro = true;
+  return true;
+}
+
+bool dynamic_macro_record_end_user(int8_t direction) {
+  is_recording_macro = false;
+  return true;
+}
+// end dynamic macro hooks
+
 //SSD1306 OLED update loop, make sure to enable OLED_DRIVER_ENABLE=yes in rules.mk
 #ifdef OLED_ENABLE
 
@@ -396,8 +410,12 @@ static void print_status_narrow(void) {
   /* caps lock */
   oled_set_cursor(0,3);
   oled_write("Caps", led_usb_state.caps_lock);
+
   oled_set_cursor(0,5);
   oled_write("Num", !led_usb_state.num_lock);
+
+  oled_set_cursor(0,7);
+  oled_write(is_recording_macro ? "REC" : "   ", false);
 }
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
@@ -503,3 +521,4 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
   return true;
 }
+
