@@ -90,8 +90,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_NO, KC_NO, LCTL(KC_PSCR), KC_PSCR, KC_NO, KC_NO,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   LGUI(KC_DOWN), LGUI(KC_1), LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5),          KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   KC_ESC, LCTL(KC_HOME), OS_ALT, OS_SHFT, OS_CTRL, KC_NO,                               KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-  OSM(MOD_RCTL|MOD_RSFT), LCTL(KC_END), KC_INS, KC_CAPS, LSFT(KC_F10), KC_NO, KC_NO,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-                                        KC_NO, KC_NO, KC_NO, KC_TRNS,                   KC_TRNS, KC_NO, KC_TRNS, KC_TRNS),
+  OSM(MOD_RCTL|MOD_RSFT), LCTL(KC_END), KC_ENT, KC_CAPS, KC_NUM, KC_INS, KC_NO,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+                                        KC_NO, KC_NO, KC_NO, KC_TRNS,                 KC_TRNS, KC_NO, KC_TRNS, KC_TRNS),
 
 [_HOMERIGHT] = LAYOUT(
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT,
@@ -109,10 +109,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [_NAV] = LAYOUT(
   KC_ESC, KC_NO, KC_NO, KC_NO, KC_BRIU, KC_BRID,                                KC_MRWD, KC_MFFD, KC_MPLY, KC_MUTE, KC_VOLD, KC_VOLU,
-  KC_TAB, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                    KC_NO, KC_HOME, KC_UP, KC_END, KC_DEL, KC_ENT,
+  KC_TAB, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                    LCTL(KC_Y), KC_HOME, KC_UP, KC_END, KC_DEL, KC_ENT,
   KC_LSFT, KC_NO, KC_LALT, KC_LSFT, KC_LCTL, KC_NO,                             KC_PGUP, KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_WH_U,
-  KC_LCTL, LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_NO, KC_NO,        KC_SCRL, KC_PGDN, LCTL(KC_PGUP), KC_NO, LCTL(KC_PGDN), RGUI(KC_T), KC_WH_D,
-                              KC_TRNS, KC_TRNS, MO(3), KC_TAB,                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
+  KC_LCTL, LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_NO, KC_NO,        KC_SCRL, KC_PGDN, LCTL(KC_PGUP), LCTL(KC_PGDN), KC_ENT, RGUI(KC_T), KC_WH_D,
+                              KC_TRNS, KC_TRNS, MO(3), KC_SPC,                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 
 [_NUMFUNC] = LAYOUT(
   KC_TRNS, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,                                         KC_NO, KC_PSLS, KC_PAST, KC_PMNS, KC_NO, KC_NUM,
@@ -416,6 +416,8 @@ static void print_status_narrow(void) {
   /* caps lock */
   oled_set_cursor(0,8);
   oled_write("Caps", led_usb_state.caps_lock);
+  oled_set_cursor(0,9);
+  oled_write("Num", led_usb_state.num_lock);
 }
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
