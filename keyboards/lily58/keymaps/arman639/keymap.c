@@ -372,25 +372,8 @@ int current_wpm = 0;
 led_t led_usb_state;
 
 static void print_status_narrow(void) {
-  oled_set_cursor(0,3);
-
-  switch (get_highest_layer(default_layer_state)) {
-    case _QWERTY:
-      oled_write("QWRTY", false);
-      break;
-    case _ADJUST:
-      oled_write("ADJUST", false);
-      break;
-    default:
-      oled_write("UNDEF", false);
-  }
-
-  oled_set_cursor(0,5);
-
   /* Print current layer */
-  oled_write("LAYER", false);
-
-  oled_set_cursor(0,6);
+  oled_set_cursor(0,1);
 
   switch (get_highest_layer(layer_state)) {
     case _QWERTY:
@@ -408,16 +391,13 @@ static void print_status_narrow(void) {
     case _UTIL:
       oled_write("Util", false);
       break;
-    case _ALT_TAB:
-      oled_write("AltTab", false);
-      break;
   }
 
   /* caps lock */
-  oled_set_cursor(0,8);
+  oled_set_cursor(0,3);
   oled_write("Caps", led_usb_state.caps_lock);
-  oled_set_cursor(0,9);
-  oled_write("Num", led_usb_state.num_lock);
+  oled_set_cursor(0,5);
+  oled_write("Num", !led_usb_state.num_lock);
 }
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
