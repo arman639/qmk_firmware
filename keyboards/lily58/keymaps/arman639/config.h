@@ -36,3 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define REPORT_MODS_SEPARATELY
 // #define DOUBLE_REPORT
 
+// for displaying oled on the non-master side
+#define SPLIT_OLED_ENABLE
+#define SPLIT_LAYER_STATE_ENABLE

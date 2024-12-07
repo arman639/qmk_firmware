@@ -374,21 +374,7 @@ bool dynamic_macro_record_end_user(int8_t direction) {
 //SSD1306 OLED update loop, make sure to enable OLED_DRIVER_ENABLE=yes in rules.mk
 #ifdef OLED_ENABLE
 
-/* KEYBOARD PET START */
-
-/* advanced settings */
-#define ANIM_FRAME_DURATION 200 // how long each frame lasts in ms
-#define ANIM_SIZE 96 // number of bytes in array. If you change sprites, minimize for adequate firmware size. max is 1024
-
-/* timers */
-uint32_t anim_timer = 0;
-uint32_t anim_sleep = 0;
-
-/* current frame */
-uint8_t current_frame = 0;
-
 /* status variables */
-int current_wpm = 0;
 led_t led_usb_state;
 
 static void print_status_narrow(void) {
@@ -433,7 +419,8 @@ static void print_status_narrow(void) {
       break;
   }
 
-  /* caps lock */
+  if (!is_keyboard_master()) return;
+
   oled_set_cursor(0,3);
   oled_write_ln("Caps", led_usb_state.caps_lock);
 
@@ -451,11 +438,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 bool oled_task_user(void) {
   led_usb_state = host_keyboard_led_state();
 
-  if (is_keyboard_master()) {
-      print_status_narrow();
-  } else {
-      // do not display anything
-  }
+  print_status_narrow();
 
   return false;
 }
