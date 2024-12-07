@@ -25,17 +25,24 @@ extern uint8_t is_master;
 #define _MACRO 10
 
 enum custom_keycodes {
+  // standard key codes
   QWERTY = SAFE_RANGE,
   LOWER,
   RAISE,
   ADJUST,
-  EXTRAe,
+
+  // other custom key codes
   ALT_TAB,
 
-  // Custom oneshot mod implementation with no timers.
+  // custom oneshot mod implementation with no timers
   OS_SHFT,
   OS_CTRL,
   OS_ALT,
+};
+
+enum tap_dance_keycodes {
+  ALT_OSL1 = 1,
+  ALT_OSL2 = 2
 };
 
 // callum
@@ -71,10 +78,6 @@ oneshot_state os_alt_state = os_untouched;
 #undef MK_C_INTERVAL_0
 #define MK_C_INTERVAL_0 16
 
-enum {
-  ALT_OSL1 = 1,
-  ALT_OSL2 = 2
-};
 //Tap dance end
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -337,7 +340,6 @@ enum layers {
   _RAISE,
   _ADJUST,
   _UTIL,
-  _ALT_TAB
 };
 
 bool is_alt_tab_active = false;
@@ -473,12 +475,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
   }
 
+  // tri layer setup and custom keycodes
   switch (keycode) {
-  case QWERTY:
-    if (record->event.pressed) {
-      set_single_persistent_default_layer(_QWERTY);
-    }
-    return false;
   case LOWER:
     if (record->event.pressed) {
       layer_on(_LOWER);
