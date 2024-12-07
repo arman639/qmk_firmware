@@ -12,20 +12,24 @@
 #include QMK_KEYBOARD_H
 
 extern uint8_t is_master;
-#define _BASE 0
-#define _SYMB 1
-#define _NAV 2
-#define _HOMERIGHT 3
-#define _NUMFUNC 4
-#define _ONESHOT 5
-#define _LAYER6 6
-#define _LAYER7 7
-#define _MOUSE 8
-#define _DISABLE 9
-#define _MACRO 10
 
-enum custom_keycodes {
-  // standard key codes
+enum layers {
+ _BASE = 0,
+ _SYMB,
+ _NAV,
+ _SETTING,
+ _NUMFUNC,
+ _OSL_L_1,
+ _OSL_R_1,
+ _OSL_L_2,
+ _OSL_L_3,
+ _MOUSE,
+ _MACRO,
+ _LOCK,
+};
+
+enum user_keycodes {
+  // built-in key codes
   QWERTY = SAFE_RANGE,
   LOWER,
   RAISE,
@@ -89,25 +93,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LCTL, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_BTN2,                 KC_BTN1, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT,
                     KC_LALT, KC_LGUI, TD(ALT_OSL1), LT(_NUMFUNC, KC_SPC),      OSM(MOD_RSFT), TD(ALT_OSL2), KC_RALT, KC_RCTL),
 
-[_ONESHOT] = LAYOUT(
-  KC_NO, KC_NO, LCTL(KC_PSCR), KC_PSCR, KC_NO, KC_NO,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-  LGUI(KC_DOWN), LGUI(KC_1), LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5),          KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-  KC_ESC, LCTL(KC_HOME), OS_ALT, OS_SHFT, OS_CTRL, KC_NO,                               KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-  OSM(MOD_RCTL|MOD_RSFT), LCTL(KC_END), KC_ENT, KC_CAPS, KC_NUM, KC_INS, KC_NO,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-                                        KC_NO, KC_NO, KC_NO, KC_TRNS,                 KC_TRNS, KC_NO, KC_TRNS, KC_TRNS),
-
-[_HOMERIGHT] = LAYOUT(
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT,
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-  KC_TRNS, KC_TRNS, KC_S, KC_D, KC_F, KC_TRNS,                     KC_TRNS, OS_ALT, OS_SHFT, OS_CTRL, KC_TRNS, KC_TRNS,
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-                    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                           KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
-
 [_SYMB] = LAYOUT(
   KC_LALT, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,                     KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11,
   ALT_TAB, KC_P1, KC_P2, KC_P3, KC_P4, KC_P5,                     KC_P6, KC_P7, KC_P8, KC_P9, KC_P0, KC_F12,
   KC_ESC, KC_EXLM, KC_AT, KC_HASH, KC_DLR, KC_PERC,               KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_TILD,
-  KC_TRNS, KC_BSLS, KC_LBRC, KC_RBRC, KC_PIPE, KC_NO, TG(_DISABLE),    KC_NO, KC_PLUS, KC_UNDS, KC_EQL, KC_LCBR, KC_RCBR, KC_TRNS,
+  KC_TRNS, KC_BSLS, KC_LBRC, KC_RBRC, KC_PIPE, KC_NO, TG(_LOCK),    KC_NO, KC_PLUS, KC_UNDS, KC_EQL, KC_LCBR, KC_RCBR, KC_TRNS,
                       KC_TRNS, KC_TRNS, KC_TRNS, KC_SPC,         KC_ENT, MO(3), KC_TRNS, KC_TRNS),
 
 [_NAV] = LAYOUT(
@@ -117,6 +107,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LCTL, LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_NO, KC_NO,        KC_SCRL, KC_PGDN, LCTL(KC_PGUP), LCTL(KC_PGDN), KC_ENT, RGUI(KC_T), KC_WH_D,
                               KC_TRNS, KC_TRNS, MO(3), KC_SPC,                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 
+[_SETTING] = LAYOUT(
+  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                               KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, QK_BOOT,
+  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                            KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+                  KC_NO, KC_NO, KC_NO, KC_NO,                                 KC_NO, KC_NO, KC_NO, KC_NO),
+
 [_NUMFUNC] = LAYOUT(
   KC_TRNS, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,                                         KC_NO, KC_PSLS, KC_PAST, KC_PMNS, KC_NO, KC_NUM,
   KC_LALT, KC_F6, KC_F7, KC_F8, KC_F9, LCA(KC_PAUS),                                  KC_F9, KC_P7, KC_P8, KC_P9, KC_PPLS, KC_PAUS,
@@ -124,14 +121,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LCTL, KC_WH_D, LALT(KC_LEFT), LALT(KC_RGHT), LALT(KC_F5), KC_PGDN, LGUI(KC_PGUP),      KC_TRNS, KC_NO, KC_P1, KC_P2, KC_P3, KC_PEQL, KC_RCTL,
                     KC_TRNS, KC_TRNS, KC_NO, KC_TRNS,                                  KC_ENT, KC_P0, KC_PDOT, KC_RALT),
 
-[_LAYER6] = LAYOUT(
+[_OSL_L_1] = LAYOUT(
+  KC_NO, KC_NO, LCTL(KC_PSCR), KC_PSCR, KC_NO, KC_NO,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+  LGUI(KC_DOWN), LGUI(KC_1), LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5),          KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+  KC_ESC, LCTL(KC_HOME), OS_ALT, OS_SHFT, OS_CTRL, KC_NO,                               KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+  OSM(MOD_RCTL|MOD_RSFT), LCTL(KC_END), KC_ENT, KC_CAPS, KC_NUM, KC_INS, KC_NO,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+                                        KC_NO, KC_NO, KC_NO, KC_TRNS,                 KC_TRNS, KC_NO, KC_TRNS, KC_TRNS),
+
+[_OSL_R_1] = LAYOUT(
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT,
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+  KC_TRNS, KC_TRNS, KC_S, KC_D, KC_F, KC_TRNS,                     KC_TRNS, OS_ALT, OS_SHFT, OS_CTRL, KC_TRNS, KC_TRNS,
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+                    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                           KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
+
+[_OSL_L_2] = LAYOUT(
   KC_NO, KC_NO, KC_NO, KC_CALC, LALT(KC_F4), LCTL(KC_F5),                             KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   LGUI(KC_UP), RCS(KC_1), RCS(KC_2), RCS(KC_3), KC_NO, KC_NO,                         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_ESC, KC_NO, KC_PSCR, KC_NO, KC_NO, KC_NO,                                        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                    KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
                                     KC_NO, KC_NO, KC_NO, KC_NO,                       KC_NO, KC_NO, KC_NO, KC_NO),
 
-[_LAYER7] = LAYOUT(
+[_OSL_L_3] = LAYOUT(
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_TRNS, KC_NO, KC_HOME, KC_UP, KC_END, KC_NO,                                      KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_TRNS, KC_NO, KC_LEFT, KC_DOWN, KC_RGHT, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
@@ -145,11 +156,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                  KC_NO, KC_NO, KC_WH_L, KC_NO, KC_WH_R, KC_WH_D, KC_TRNS,
                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 
-[_DISABLE] = LAYOUT(
+[_LOCK] = LAYOUT(
   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                      KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, TG(_DISABLE),                                  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, TG(_LOCK),                                  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
                   KC_NO, KC_NO, KC_NO, KC_NO,                                 KC_NO, KC_NO, KC_NO, KC_NO),
 
 [_MACRO] = LAYOUT(
@@ -212,11 +223,11 @@ static td_tap_t alttap_state = {
 void alt_finished (tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
-    case SINGLE_TAP: layer_on(_ONESHOT); is_oneshot_active = true; break;
+    case SINGLE_TAP: layer_on(_OSL_L_1); is_oneshot_active = true; break;
     case SINGLE_HOLD: layer_on(_SYMB); break;
-    case DOUBLE_TAP: set_oneshot_layer(_LAYER6, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
+    case DOUBLE_TAP: set_oneshot_layer(_OSL_L_2, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
     case DOUBLE_HOLD: layer_on(_NUMFUNC); break;
-	case TRIPLE_HOLD: layer_on(_LAYER7); break;
+	case TRIPLE_HOLD: layer_on(_OSL_L_3); break;
     default: break;
   }
 }
@@ -227,7 +238,7 @@ void alt_reset (tap_dance_state_t *state, void *user_data) {
     case SINGLE_HOLD: layer_off(_SYMB); break;
     case DOUBLE_TAP: break;
     case DOUBLE_HOLD: layer_off(_NUMFUNC); break;
-	case TRIPLE_HOLD: layer_off(_LAYER7); break;
+	case TRIPLE_HOLD: layer_off(_OSL_L_3); break;
     default: break;
   }
   alttap_state.state = 0;
@@ -236,7 +247,7 @@ void alt_reset (tap_dance_state_t *state, void *user_data) {
 void alt2_finished (tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
-    case SINGLE_TAP: layer_on(_HOMERIGHT); is_oneshot_active = true; break;
+    case SINGLE_TAP: layer_on(_OSL_R_1); is_oneshot_active = true; break;
     case SINGLE_HOLD: layer_on(_NAV); break;
     case DOUBLE_HOLD: layer_on(_MOUSE); break;
     default: break;
@@ -282,8 +293,8 @@ bool is_atleast_one_pressed(void) {
 }
 
 void turn_off_homerow(void) {
-  layer_off(_ONESHOT);
-  layer_off(_HOMERIGHT);
+  layer_off(_OSL_L_1);
+  layer_off(_OSL_R_1);
   unregister_code(KC_LSFT);
   unregister_code(KC_LCTL);
   unregister_code(KC_LALT);
@@ -334,13 +345,6 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-enum layers {
-  _QWERTY,
-  _LOWER,
-  _RAISE,
-  _ADJUST,
-  _UTIL,
-};
 
 bool is_alt_tab_active = false;
 
@@ -391,33 +395,55 @@ static void print_status_narrow(void) {
   /* Print current layer */
   oled_set_cursor(0,1);
 
-  switch (get_highest_layer(layer_state)) {
-    case _QWERTY:
-      oled_write("Base ", false);
+  int curr_layer = get_highest_layer(layer_state);
+  switch (curr_layer) {
+    case _BASE:
+      oled_write_ln("Base ", false);
       break;
-    case _ADJUST:
-      oled_write("Adjst", false);
+    case _SYMB:
+      oled_write_ln("Symb", false);
       break;
-    case _RAISE:
-      oled_write("Raise", false);
+    case _NAV:
+      oled_write_ln("Nav", false);
       break;
-    case _LOWER:
-      oled_write("Lower", false);
+    case _SETTING:
+      oled_write_ln("Set", false);
       break;
-    case _UTIL:
-      oled_write("Util", false);
+    case _NUMFUNC:
+      oled_write_ln("Num", false);
+      break;
+    case _OSL_L_1:
+      oled_write_ln("OSL-1", false);
+      break;
+    case _OSL_R_1:
+      oled_write_ln("OSR-1", false);
+      break;
+    case _OSL_L_2:
+      oled_write_ln("OSL-2", false);
+      break;
+    case _OSL_L_3:
+      oled_write_ln("OSL-3", false);
+      break;
+    case _MOUSE:
+      oled_write_ln("Mouse", false);
+      break;
+    case _MACRO:
+      oled_write_ln("Macro", false);
+      break;
+    case _LOCK:
+      oled_write_ln("Lock", false);
       break;
   }
 
   /* caps lock */
   oled_set_cursor(0,3);
-  oled_write("Caps", led_usb_state.caps_lock);
+  oled_write_ln("Caps", led_usb_state.caps_lock);
 
   oled_set_cursor(0,5);
-  oled_write("Num", !led_usb_state.num_lock);
+  oled_write_ln("Num", !led_usb_state.num_lock);
 
   oled_set_cursor(0,7);
-  oled_write(is_recording_macro ? "REC" : "   ", false);
+  oled_write_ln(is_recording_macro ? "REC" : "", false);
 }
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
@@ -479,29 +505,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
   case LOWER:
     if (record->event.pressed) {
-      layer_on(_LOWER);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+      layer_on(_SYMB);
+      update_tri_layer(_SYMB, _NAV, _SETTING);
     } else {
-      layer_off(_LOWER);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+      layer_off(_SYMB);
+      update_tri_layer(_SYMB, _NAV, _SETTING);
     }
     return false;
   case RAISE:
     if (record->event.pressed) {
-      layer_on(_RAISE);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+      layer_on(_NAV);
+      update_tri_layer(_SYMB, _NAV, _SETTING);
     } else {
-      layer_off(_RAISE);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+      layer_off(_NAV);
+      update_tri_layer(_SYMB, _NAV, _SETTING);
     }
     return false;
   case ADJUST:
     if (record->event.pressed) {
-      layer_on(_ADJUST);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+      layer_on(_SETTING);
+      update_tri_layer(_SYMB, _NAV, _SETTING);
     } else {
-      layer_off(_ADJUST);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+      layer_off(_SETTING);
+      update_tri_layer(_SYMB, _NAV, _SETTING);
     }
     return false;
   case ALT_TAB: // super alt tab macro
