@@ -554,8 +554,4 @@ void leader_end_user(void) {
         // Leader, d, d => Ctrl+A, Ctrl+C
         // SEND_STRING(SS_LCTL("a") SS_LCTL("c"));
     // }
-    // else if (leader_sequence_two_keys(KC_A, KC_S)) {
-    //     // Leader, a, s => GUI+S
-    //     tap_code16(LGUI(KC_S));
-    // }
 }
