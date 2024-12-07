@@ -39,3 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // for displaying oled on the non-master side
 #define SPLIT_OLED_ENABLE
 #define SPLIT_LAYER_STATE_ENABLE
+
+// leader key
+#define LEADER_PER_KEY_TIMING
+#define LEADER_NO_TIMEOUT
+// #define LEADER_TIMEOUT 250

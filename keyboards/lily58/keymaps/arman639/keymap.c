@@ -3,6 +3,7 @@
 #include "action_layer.h"
 #include "action_util.h"
 #include "keycodes.h"
+#include "modifiers.h"
 #include "quantum_keycodes.h"
 #include "oled_driver.h"
 #include "quantum.h"
@@ -121,7 +122,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [_OSL_T_1] = LAYOUT(
   KC_NO, KC_NO, LCTL(KC_PSCR), KC_PSCR, KC_NO, KC_NO,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-  LGUI(KC_DOWN), LGUI(KC_1), LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5),          KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+  LGUI(KC_DOWN), KC_NO, KC_NO, QK_LEAD, KC_NO, KC_NO,          KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   KC_ESC, LCTL(KC_HOME), OS_ALT, OS_SHFT, OS_CTRL, KC_NO,                               KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   OSM(MOD_RCTL|MOD_RSFT), LCTL(KC_END), KC_ENT, KC_CAPS, KC_NUM, KC_INS, KC_NO,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
                                         KC_NO, KC_NO, KC_NO, KC_TRNS,                 KC_TRNS, KC_NO, KC_TRNS, KC_TRNS),
@@ -525,3 +526,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
+// leader key
+void leader_start_user(void) {
+    // Do something when the leader key is pressed
+}
+
+void leader_end_user(void) {
+    if (leader_sequence_one_key(KC_N)) { // ñ
+        register_mods(MOD_LALT);
+        tap_code16(KC_P1);
+        tap_code16(KC_P6);
+        tap_code16(KC_P4);
+        unregister_mods(MOD_LALT);
+    }
+    else if (leader_sequence_two_keys(KC_N, KC_N)) { // Ñ
+        register_mods(MOD_LALT);
+        tap_code16(KC_P1);
+        tap_code16(KC_P6);
+        tap_code16(KC_P5);
+        unregister_mods(MOD_LALT);
+    }
+    // some samples:
+    // else if (leader_sequence_one_key(KC_F)) {
+        // SEND_STRING("Some string.");
+    // }
+    // else if (leader_sequence_two_keys(KC_D, KC_D)) {
+        // Leader, d, d => Ctrl+A, Ctrl+C
+        // SEND_STRING(SS_LCTL("a") SS_LCTL("c"));
+    // }
+    // else if (leader_sequence_two_keys(KC_A, KC_S)) {
+    //     // Leader, a, s => GUI+S
+    //     tap_code16(LGUI(KC_S));
+    // }
+}
