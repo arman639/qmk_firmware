@@ -29,7 +29,11 @@ enum layers {
 };
 
 enum user_keycodes {
-  // built-in layer key codes
+  // tap dance keycodes
+  ALT_OSL1 = 1,
+  ALT_OSL2 = 2,
+
+  // layer key codes
   QWERTY = SAFE_RANGE,
   LOWER,
   RAISE,
@@ -42,11 +46,6 @@ enum user_keycodes {
   OS_SHFT,
   OS_CTRL,
   OS_ALT,
-};
-
-enum tap_dance_keycodes {
-  ALT_OSL1 = 1,
-  ALT_OSL2 = 2
 };
 
 // callum
@@ -82,7 +81,6 @@ oneshot_state os_alt_state = os_untouched;
 #undef MK_C_INTERVAL_0
 #define MK_C_INTERVAL_0 16
 
-//Tap dance end
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
