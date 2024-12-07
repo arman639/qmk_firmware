@@ -99,11 +99,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                       KC_TRNS, KC_TRNS, KC_TRNS, KC_SPC,         KC_ENT, MO(3), KC_TRNS, KC_TRNS),
 
 [_NAV] = LAYOUT(
-  KC_ESC, KC_NO, KC_NO, KC_NO, KC_BRIU, KC_BRID,                                KC_MRWD, KC_MFFD, KC_MPLY, KC_MUTE, KC_VOLD, KC_VOLU,
-  KC_TAB, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                    LCTL(KC_Y), KC_HOME, KC_UP, KC_END, KC_DEL, KC_ENT,
-  KC_LSFT, KC_NO, KC_LALT, KC_LSFT, KC_LCTL, KC_NO,                             KC_PGUP, KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_WH_U,
-  KC_LCTL, LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_NO, KC_NO,        KC_SCRL, KC_PGDN, LCTL(KC_PGUP), LCTL(KC_PGDN), KC_ENT, RGUI(KC_T), KC_WH_D,
-                              KC_TRNS, KC_TRNS, MO(3), KC_SPC,                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
+  KC_ESC, KC_NO, KC_NO, KC_NO, KC_BRIU, KC_BRID,                                    KC_MRWD, KC_MFFD, KC_MPLY, KC_MUTE, KC_VOLD, KC_VOLU,
+  KC_TAB, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                        LCTL(KC_Y), KC_HOME, KC_UP, KC_END, KC_DEL, KC_NO,
+  KC_LSFT, KC_NO, KC_LALT, KC_LSFT, KC_LCTL, KC_NO,                                 KC_TAB, KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_WH_U,
+  KC_LCTL, LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_NO, KC_NO, KC_SCRL,   KC_NO, KC_PGUP, KC_PGDN, KC_ENT, RGUI(KC_T), KC_WH_D,
+                              KC_TRNS, KC_TRNS, MO(3), KC_SPC,                      KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 
 [_SETTING] = LAYOUT(
   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                               KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, QK_BOOT,
