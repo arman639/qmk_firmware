@@ -19,17 +19,17 @@ enum layers {
  _NAV,
  _SETTING,
  _NUMFUNC,
- _OSL_L_1,
- _OSL_R_1,
- _OSL_L_2,
- _OSL_L_3,
+ _OSL_T_1,
+ _OSR_T_1,
+ _OSL_T_2,
+ _OSL_H_2,
  _MOUSE,
  _MACRO,
  _LOCK,
 };
 
 enum user_keycodes {
-  // built-in key codes
+  // built-in layer key codes
   QWERTY = SAFE_RANGE,
   LOWER,
   RAISE,
@@ -121,28 +121,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LCTL, KC_WH_D, LALT(KC_LEFT), LALT(KC_RGHT), LALT(KC_F5), KC_PGDN, LGUI(KC_PGUP),      KC_TRNS, KC_NO, KC_P1, KC_P2, KC_P3, KC_PEQL, KC_RCTL,
                     KC_TRNS, KC_TRNS, KC_NO, KC_TRNS,                                  KC_ENT, KC_P0, KC_PDOT, KC_RALT),
 
-[_OSL_L_1] = LAYOUT(
+[_OSL_T_1] = LAYOUT(
   KC_NO, KC_NO, LCTL(KC_PSCR), KC_PSCR, KC_NO, KC_NO,                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   LGUI(KC_DOWN), LGUI(KC_1), LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5),          KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   KC_ESC, LCTL(KC_HOME), OS_ALT, OS_SHFT, OS_CTRL, KC_NO,                               KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   OSM(MOD_RCTL|MOD_RSFT), LCTL(KC_END), KC_ENT, KC_CAPS, KC_NUM, KC_INS, KC_NO,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
                                         KC_NO, KC_NO, KC_NO, KC_TRNS,                 KC_TRNS, KC_NO, KC_TRNS, KC_TRNS),
 
-[_OSL_R_1] = LAYOUT(
+[_OSR_T_1] = LAYOUT(
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT,
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
   KC_TRNS, KC_TRNS, KC_S, KC_D, KC_F, KC_TRNS,                     KC_TRNS, OS_ALT, OS_SHFT, OS_CTRL, KC_TRNS, KC_TRNS,
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
                     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                           KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 
-[_OSL_L_2] = LAYOUT(
+[_OSL_T_2] = LAYOUT(
   KC_NO, KC_NO, KC_NO, KC_CALC, LALT(KC_F4), LCTL(KC_F5),                             KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   LGUI(KC_UP), RCS(KC_1), RCS(KC_2), RCS(KC_3), KC_NO, KC_NO,                         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_ESC, KC_NO, KC_PSCR, KC_NO, KC_NO, KC_NO,                                        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                    KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
                                     KC_NO, KC_NO, KC_NO, KC_NO,                       KC_NO, KC_NO, KC_NO, KC_NO),
 
-[_OSL_L_3] = LAYOUT(
+[_OSL_H_2] = LAYOUT(
   KC_TRNS, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_TRNS, KC_NO, KC_HOME, KC_UP, KC_END, KC_NO,                                      KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
   KC_TRNS, KC_NO, KC_LEFT, KC_DOWN, KC_RGHT, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
@@ -223,11 +223,11 @@ static td_tap_t alttap_state = {
 void alt_finished (tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
-    case SINGLE_TAP: layer_on(_OSL_L_1); is_oneshot_active = true; break;
+    case SINGLE_TAP: layer_on(_OSL_T_1); is_oneshot_active = true; break;
     case SINGLE_HOLD: layer_on(_SYMB); break;
-    case DOUBLE_TAP: set_oneshot_layer(_OSL_L_2, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
-    case DOUBLE_HOLD: layer_on(_NUMFUNC); break;
-	case TRIPLE_HOLD: layer_on(_OSL_L_3); break;
+    case DOUBLE_TAP: set_oneshot_layer(_OSL_T_2, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
+    case DOUBLE_HOLD: layer_on(_OSL_H_2); break;
+	// case TRIPLE_HOLD: layer_on(); break;
     default: break;
   }
 }
@@ -237,8 +237,8 @@ void alt_reset (tap_dance_state_t *state, void *user_data) {
     case SINGLE_TAP: break;
     case SINGLE_HOLD: layer_off(_SYMB); break;
     case DOUBLE_TAP: break;
-    case DOUBLE_HOLD: layer_off(_NUMFUNC); break;
-	case TRIPLE_HOLD: layer_off(_OSL_L_3); break;
+    case DOUBLE_HOLD: layer_off(_OSL_H_2); break;
+	// case TRIPLE_HOLD: layer_off(); break;
     default: break;
   }
   alttap_state.state = 0;
@@ -247,7 +247,7 @@ void alt_reset (tap_dance_state_t *state, void *user_data) {
 void alt2_finished (tap_dance_state_t *state, void *user_data) {
   alttap_state.state = cur_dance(state);
   switch (alttap_state.state) {
-    case SINGLE_TAP: layer_on(_OSL_R_1); is_oneshot_active = true; break;
+    case SINGLE_TAP: layer_on(_OSR_T_1); is_oneshot_active = true; break;
     case SINGLE_HOLD: layer_on(_NAV); break;
     case DOUBLE_HOLD: layer_on(_MOUSE); break;
     default: break;
@@ -293,8 +293,8 @@ bool is_atleast_one_pressed(void) {
 }
 
 void turn_off_homerow(void) {
-  layer_off(_OSL_L_1);
-  layer_off(_OSL_R_1);
+  layer_off(_OSL_T_1);
+  layer_off(_OSR_T_1);
   unregister_code(KC_LSFT);
   unregister_code(KC_LCTL);
   unregister_code(KC_LALT);
@@ -412,17 +412,15 @@ static void print_status_narrow(void) {
     case _NUMFUNC:
       oled_write_ln("Num", false);
       break;
-    case _OSL_L_1:
+    case _OSL_T_1:
       oled_write_ln("OSL-1", false);
       break;
-    case _OSL_R_1:
+    case _OSR_T_1:
       oled_write_ln("OSR-1", false);
       break;
-    case _OSL_L_2:
+    case _OSL_T_2:
+    case _OSL_H_2:
       oled_write_ln("OSL-2", false);
-      break;
-    case _OSL_L_3:
-      oled_write_ln("OSL-3", false);
       break;
     case _MOUSE:
       oled_write_ln("Mouse", false);
