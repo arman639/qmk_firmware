@@ -453,7 +453,7 @@ bool somePressed(void) {
 }
 
 
-void update_oneshot2(
+void process_homerow_keys(
   oneshot_state *state,
   uint16_t mod,
   uint16_t trigger,
@@ -466,35 +466,28 @@ void update_oneshot2(
         *state = os_pressed;
         register_code(mod);
         return;
-    }
+    } else {
+        *state = os_up_used;
 
-    // if unpressed
-    *state = os_up_used;
+        if (somePressed()) return;
 
-    if (somePressed()) return;
+        if (isHomeRowActionAlreadyUsed) {
+            turn_off_homerow();
+            return;
+        }
 
-    if (isHomeRowActionAlreadyUsed) {
-        ignoreOneshot = true;
-        return;
-    }
-
-    if (atleastOneUpUsed()) {
-        is_oneshot_modifier_queued = true;
-        layer_off(_OSL_T_1);
-        layer_off(_OSR_T_1);
+        if (atleastOneUpUsed()) {
+            is_oneshot_modifier_queued = true;
+            layer_off(_OSL_T_1);
+            layer_off(_OSR_T_1);
+        }
     }
 }
 
 bool process_callum(uint16_t keycode, keyrecord_t *record) {
-    if (ignoreOneshot) {
-        turn_off_homerow();
-        ignoreOneshot = false;
-        return true;
-    }
-
     if (is_oneshot_modifier_queued || (!is_homerow_mod_key(keycode) && allUnpressed())) {
         is_oneshot_modifier_queued = false;
-        ignoreOneshot = true; // the modifiers are still pressed but ignore oneshot on next process
+        ignoreOneshot = true; // the modifiers are still pressed but ignore oneshot for the subsequent processes
         return true;
     }
 
@@ -503,12 +496,20 @@ bool process_callum(uint16_t keycode, keyrecord_t *record) {
         return true;
     }
 
-    // callum
-    update_oneshot2(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
-    update_oneshot2(&os_ctrl_state, KC_LCTL, OS_CTRL, keycode, record);
-    update_oneshot2(&os_alt_state, KC_LALT, OS_ALT, keycode, record);
+    if (is_homerow_mod_key(keycode)) {
+        process_homerow_keys(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
+        process_homerow_keys(&os_ctrl_state, KC_LCTL, OS_CTRL, keycode, record);
+        process_homerow_keys(&os_alt_state, KC_LALT, OS_ALT, keycode, record);
+    }
 
     return false;
+}
+
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (ignoreOneshot) { // after pressing the final key in the callum process, turn off homerow mods
+        turn_off_homerow();
+        ignoreOneshot = false;
+    }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
