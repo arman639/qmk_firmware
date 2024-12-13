@@ -7,7 +7,6 @@
 #include "quantum_keycodes.h"
 #include "oled_driver.h"
 #include "quantum.h"
-#include "matrix.h"
 #include "action.h"
 
 #include QMK_KEYBOARD_H
@@ -272,6 +271,7 @@ tap_dance_action_t  tap_dance_actions[] = {
 
 //callum
 bool ignoreOneshot = false;
+bool is_oneshot_modifier_queued = false;
 
 bool is_all_modifiers_unqueued(void) {
   bool atleastOneUpUsed = (os_shft_state == os_up_used ||
@@ -285,11 +285,7 @@ bool is_all_modifiers_unqueued(void) {
   return atleastOneUpUsed && noPressed;
 }
 
-bool is_atleast_one_pressed(void) {
-  return (os_shft_state == os_pressed ||
-    os_ctrl_state == os_pressed ||
-    os_alt_state == os_pressed);
-}
+bool isHomeRowActionAlreadyUsed = false;
 
 void turn_off_homerow(void) {
   layer_off(_OSL_T_1);
@@ -298,13 +294,14 @@ void turn_off_homerow(void) {
   unregister_code(KC_LCTL);
   unregister_code(KC_LALT);
   is_oneshot_active = false;
+  isHomeRowActionAlreadyUsed = false;
 
   os_shft_state = os_untouched;
   os_ctrl_state = os_untouched;
   os_alt_state = os_untouched;
 }
 
-bool is_oneshot_ignored_key(uint16_t keycode) {
+bool is_homerow_mod_key(uint16_t keycode) {
   switch (keycode) {
   case OS_SHFT:
   case OS_CTRL:
@@ -315,12 +312,6 @@ bool is_oneshot_ignored_key(uint16_t keycode) {
   }
 }
 
-void matrix_scan_user(void) {
-  if (ignoreOneshot) {
-    turn_off_homerow();
-    ignoreOneshot = false;
-  }
-}
 // end callum
 
 bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
@@ -457,12 +448,26 @@ void update_oneshot2(
       register_code(mod);
     } else {
       *state = os_up_used;
-      unregister_code(mod);
 
-      bool is_all_unqueued = is_all_modifiers_unqueued();
-      if (is_all_unqueued) {
-        // *state = os_untouched;
-        turn_off_homerow();
+      bool atleastOneUpUsed = (os_shft_state == os_up_used ||
+        os_ctrl_state == os_up_used ||
+        os_alt_state == os_up_used);
+
+      bool allUnpressed = (os_shft_state != os_pressed &&
+        os_ctrl_state != os_pressed &&
+        os_alt_state != os_pressed);
+
+      if ((atleastOneUpUsed && allUnpressed)) {
+        if (!isHomeRowActionAlreadyUsed) {
+            is_oneshot_modifier_queued = true;
+        }
+        layer_off(_OSL_T_1);
+        layer_off(_OSR_T_1);
+        layer_on(_BASE);
+      }
+
+      if (allUnpressed && isHomeRowActionAlreadyUsed) {
+        ignoreOneshot = true;
       }
     }
   }
@@ -470,15 +475,35 @@ void update_oneshot2(
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (is_oneshot_active) {
+    if (ignoreOneshot) {
+        turn_off_homerow();
+        ignoreOneshot = false;
+        return true;
+    }
+
+    bool allModsUnpressed = (os_shft_state != os_pressed &&
+        os_ctrl_state != os_pressed &&
+        os_alt_state != os_pressed);
+
+    if (is_oneshot_modifier_queued || (!is_homerow_mod_key(keycode) && allModsUnpressed)) {
+        is_oneshot_modifier_queued = false;
+        ignoreOneshot = true; // the modifiers are still pressed but ignore oneshot on next process
+        return true;
+    }
+
+    bool atleastOnePressed = (os_shft_state == os_pressed ||
+        os_ctrl_state == os_pressed ||
+        os_alt_state == os_pressed);
+
+    if (atleastOnePressed && !is_homerow_mod_key(keycode)) {
+        isHomeRowActionAlreadyUsed = true;
+        return true;
+    }
+
     // callum
     update_oneshot2(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
     update_oneshot2(&os_ctrl_state, KC_LCTL, OS_CTRL, keycode, record);
     update_oneshot2(&os_alt_state, KC_LALT, OS_ALT, keycode, record);
-
-    if (!is_oneshot_ignored_key(keycode) && !is_atleast_one_pressed()) {
-      ignoreOneshot = true;
-      return true;
-    }
   }
 
   // tri layer setup and custom keycodes
