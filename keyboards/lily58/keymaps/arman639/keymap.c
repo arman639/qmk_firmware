@@ -496,8 +496,14 @@ bool process_callum(uint16_t keycode, keyrecord_t *record) {
             return true;
         }
 
-        if (somePressed() && !is_homerow_mod_key(keycode)) {
+        if (somePressed()) {
             isHomeRowActionAlreadyUsed = true;
+            return true;
+        }
+
+        // on click of "true" oneshot key (e.g. osl + a), set ignoreOneShot so that hrm and osl will be cleared next
+        if (!is_oneshot_modifier_queued && !somePressed()) {
+            ignoreOneshot = true;
             return true;
         }
     }
