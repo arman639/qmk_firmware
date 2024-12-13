@@ -436,20 +436,20 @@ bool oled_task_user(void) {
 #endif
 
 
-bool atleastOneUpUsed(void) {
+bool atleastOneHrmUpUsed(void) {
     return (os_shft_state == os_up_used ||
     os_ctrl_state == os_up_used ||
     os_alt_state == os_up_used);
 }
 
-bool allUnpressed(void) {
+bool allHrmUnpressed(void) {
     return (os_shft_state != os_pressed &&
     os_ctrl_state != os_pressed &&
     os_alt_state != os_pressed);
 }
 
-bool somePressed(void) {
-    return !allUnpressed();
+bool someHrmPressed(void) {
+    return !allHrmUnpressed();
 }
 
 
@@ -467,16 +467,17 @@ void process_homerow_keys(
         register_code(mod);
         return;
     } else {
+        // on hrm keyup
         *state = os_up_used;
 
-        if (somePressed()) return;
+        if (someHrmPressed()) return;
 
         if (isHomeRowActionAlreadyUsed) {
             turn_off_homerow();
             return;
         }
 
-        if (atleastOneUpUsed()) {
+        if (atleastOneHrmUpUsed()) {
             is_oneshot_modifier_queued = true;
             layer_off(_OSL_T_1);
             layer_off(_OSR_T_1);
@@ -496,13 +497,13 @@ bool process_callum(uint16_t keycode, keyrecord_t *record) {
             return true;
         }
 
-        if (somePressed()) {
+        if (someHrmPressed()) {
             isHomeRowActionAlreadyUsed = true;
             return true;
         }
 
         // on click of "true" oneshot key (e.g. osl + a), set ignoreOneShot so that hrm and osl will be cleared next
-        if (!is_oneshot_modifier_queued && !somePressed()) {
+        if (!is_oneshot_modifier_queued && !someHrmPressed()) {
             ignoreOneshot = true;
             return true;
         }
