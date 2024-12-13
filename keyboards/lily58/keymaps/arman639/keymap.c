@@ -435,6 +435,24 @@ bool oled_task_user(void) {
 
 #endif
 
+
+bool atleastOneUpUsed(void) {
+    return (os_shft_state == os_up_used ||
+    os_ctrl_state == os_up_used ||
+    os_alt_state == os_up_used);
+}
+
+bool allUnpressed(void) {
+    return (os_shft_state != os_pressed &&
+    os_ctrl_state != os_pressed &&
+    os_alt_state != os_pressed);
+}
+
+bool somePressed(void) {
+    return !allUnpressed();
+}
+
+
 void update_oneshot2(
   oneshot_state *state,
   uint16_t mod,
@@ -442,60 +460,45 @@ void update_oneshot2(
   uint16_t keycode,
   keyrecord_t *record
 ) {
-  if (keycode == trigger) {
+    if (keycode != trigger) return;
+
     if (record->event.pressed) {
-      *state = os_pressed;
-      register_code(mod);
-    } else {
-      *state = os_up_used;
+        *state = os_pressed;
+        register_code(mod);
+        return;
+    }
 
-      bool atleastOneUpUsed = (os_shft_state == os_up_used ||
-        os_ctrl_state == os_up_used ||
-        os_alt_state == os_up_used);
+    // if unpressed
+    *state = os_up_used;
 
-      bool allUnpressed = (os_shft_state != os_pressed &&
-        os_ctrl_state != os_pressed &&
-        os_alt_state != os_pressed);
+    if (somePressed()) return;
 
-      if ((atleastOneUpUsed && allUnpressed)) {
-        if (!isHomeRowActionAlreadyUsed) {
-            is_oneshot_modifier_queued = true;
-        }
+    if (isHomeRowActionAlreadyUsed) {
+        ignoreOneshot = true;
+        return;
+    }
+
+    if (atleastOneUpUsed()) {
+        is_oneshot_modifier_queued = true;
         layer_off(_OSL_T_1);
         layer_off(_OSR_T_1);
-        layer_on(_BASE);
-      }
-
-      if (allUnpressed && isHomeRowActionAlreadyUsed) {
-        ignoreOneshot = true;
-      }
     }
-  }
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  if (is_oneshot_active) {
+bool process_callum(uint16_t keycode, keyrecord_t *record) {
     if (ignoreOneshot) {
         turn_off_homerow();
         ignoreOneshot = false;
         return true;
     }
 
-    bool allModsUnpressed = (os_shft_state != os_pressed &&
-        os_ctrl_state != os_pressed &&
-        os_alt_state != os_pressed);
-
-    if (is_oneshot_modifier_queued || (!is_homerow_mod_key(keycode) && allModsUnpressed)) {
+    if (is_oneshot_modifier_queued || (!is_homerow_mod_key(keycode) && allUnpressed())) {
         is_oneshot_modifier_queued = false;
         ignoreOneshot = true; // the modifiers are still pressed but ignore oneshot on next process
         return true;
     }
 
-    bool atleastOnePressed = (os_shft_state == os_pressed ||
-        os_ctrl_state == os_pressed ||
-        os_alt_state == os_pressed);
-
-    if (atleastOnePressed && !is_homerow_mod_key(keycode)) {
+    if (somePressed() && !is_homerow_mod_key(keycode)) {
         isHomeRowActionAlreadyUsed = true;
         return true;
     }
@@ -504,6 +507,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     update_oneshot2(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
     update_oneshot2(&os_ctrl_state, KC_LCTL, OS_CTRL, keycode, record);
     update_oneshot2(&os_alt_state, KC_LALT, OS_ALT, keycode, record);
+
+    return false;
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  if (is_oneshot_active) {
+    bool isReturnProcess = process_callum(keycode, record);
+    if (isReturnProcess) return true;
   }
 
   // tri layer setup and custom keycodes
