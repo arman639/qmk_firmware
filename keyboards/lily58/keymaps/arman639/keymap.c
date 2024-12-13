@@ -583,6 +583,13 @@ void leader_end_user(void) {
         tap_code16(KC_P4);
         unregister_mods(MOD_LALT);
     }
+    else if (leader_sequence_one_key(KC_S)) { // snipping tool
+        register_mods(MOD_LGUI);
+        register_mods(MOD_LSFT);
+        tap_code16(KC_S);
+        unregister_mods(MOD_LGUI);
+        unregister_mods(MOD_LSFT);
+    }
     else if (leader_sequence_two_keys(KC_N, KC_N)) { // Ñ
         register_mods(MOD_LALT);
         tap_code16(KC_P1);
