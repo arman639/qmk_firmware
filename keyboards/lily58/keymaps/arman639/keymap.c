@@ -485,21 +485,21 @@ void process_homerow_keys(
 }
 
 bool process_callum(uint16_t keycode, keyrecord_t *record) {
-    if (is_oneshot_modifier_queued || (!is_homerow_mod_key(keycode) && allUnpressed())) {
-        is_oneshot_modifier_queued = false;
-        ignoreOneshot = true; // the modifiers are still pressed but ignore oneshot for the subsequent processes
-        return true;
-    }
-
-    if (somePressed() && !is_homerow_mod_key(keycode)) {
-        isHomeRowActionAlreadyUsed = true;
-        return true;
-    }
-
     if (is_homerow_mod_key(keycode)) {
         process_homerow_keys(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
         process_homerow_keys(&os_ctrl_state, KC_LCTL, OS_CTRL, keycode, record);
         process_homerow_keys(&os_alt_state, KC_LALT, OS_ALT, keycode, record);
+    } else {
+        if (is_oneshot_modifier_queued) {
+            is_oneshot_modifier_queued = false;
+            ignoreOneshot = true; // the modifiers are still pressed but ignore oneshot for the subsequent processes
+            return true;
+        }
+
+        if (somePressed() && !is_homerow_mod_key(keycode)) {
+            isHomeRowActionAlreadyUsed = true;
+            return true;
+        }
     }
 
     return false;
