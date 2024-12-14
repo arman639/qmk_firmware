@@ -217,7 +217,6 @@ void alt_finished (tap_dance_state_t *state, void *user_data) {
     case SINGLE_HOLD: layer_on(_SYMB); break;
     case DOUBLE_TAP: set_oneshot_layer(_OSL_T_2, ONESHOT_START); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
     case DOUBLE_HOLD: layer_on(_OSL_H_2); break;
-	// case TRIPLE_HOLD: layer_on(); break;
     default: break;
   }
 }
@@ -228,7 +227,6 @@ void alt_reset (tap_dance_state_t *state, void *user_data) {
     case SINGLE_HOLD: layer_off(_SYMB); break;
     case DOUBLE_TAP: break;
     case DOUBLE_HOLD: layer_off(_OSL_H_2); break;
-	// case TRIPLE_HOLD: layer_off(); break;
     default: break;
   }
   alttap_state.state = 0;
