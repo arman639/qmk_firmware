@@ -37,7 +37,6 @@ enum user_keycodes {
   QWERTY = SAFE_RANGE,
   LOWER,
   RAISE,
-  ADJUST,
 
   // other custom key codes
   ALT_TAB,
@@ -95,22 +94,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LALT, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,                     KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11,
   ALT_TAB, KC_P1, KC_P2, KC_P3, KC_P4, KC_P5,                     KC_P6, KC_P7, KC_P8, KC_P9, KC_P0, KC_F12,
   KC_ESC, KC_EXLM, KC_AT, KC_HASH, KC_DLR, KC_PERC,               KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_TILD,
-  KC_TRNS, KC_BSLS, KC_LBRC, KC_RBRC, KC_PIPE, KC_NO, TG(_LOCK),    KC_NO, KC_PLUS, KC_UNDS, KC_EQL, KC_LCBR, KC_RCBR, KC_TRNS,
-                      KC_TRNS, KC_TRNS, KC_TRNS, KC_SPC,         KC_ENT, MO(3), KC_TRNS, KC_TRNS),
+  KC_TRNS, KC_BSLS, KC_LBRC, KC_RBRC, KC_PIPE, KC_NO, TG(_LOCK),    KC_NO, KC_PLUS, KC_MINS, KC_EQL, KC_LCBR, KC_RCBR, KC_TRNS,
+                      KC_TRNS, KC_TRNS, KC_TRNS, KC_SPC,         KC_ENT, KC_UNDS, KC_TRNS, KC_TRNS),
 
 [_NAV] = LAYOUT(
   KC_ESC, KC_NO, KC_NO, KC_NO, KC_BRIU, KC_BRID,                                    KC_MRWD, KC_MFFD, KC_MPLY, KC_MUTE, KC_VOLD, KC_VOLU,
   KC_TAB, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                        LCTL(KC_Y), KC_HOME, KC_UP, KC_END, KC_DEL, KC_NO,
   KC_LSFT, KC_NO, KC_LALT, KC_LSFT, KC_LCTL, KC_NO,                                 KC_TAB, KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC, KC_WH_U,
   KC_LCTL, LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), KC_NO, KC_NO, KC_SCRL,   KC_NO, KC_PGUP, KC_PGDN, KC_ENT, RGUI(KC_T), KC_WH_D,
-                              KC_TRNS, KC_TRNS, MO(3), KC_SPC,                      KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
-
-[_SETTING] = LAYOUT(
-  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                               KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, QK_BOOT,
-  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                                   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,                            KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-                  KC_NO, KC_NO, KC_NO, KC_NO,                                 KC_NO, KC_NO, KC_NO, KC_NO),
+                              KC_TRNS, KC_TRNS, KC_TRNS, KC_SPC,                      KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 
 [_NUMFUNC] = LAYOUT(
   KC_TRNS, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,                                         KC_NO, KC_PSLS, KC_PAST, KC_PMNS, KC_NO, KC_NUM,
@@ -374,16 +366,13 @@ static void print_status_narrow(void) {
   int curr_layer = get_highest_layer(layer_state);
   switch (curr_layer) {
     case _BASE:
-      oled_write_ln("Base ", false);
+      oled_write_ln("Base", false);
       break;
     case _SYMB:
       oled_write_ln("Symb", false);
       break;
     case _NAV:
       oled_write_ln("Nav", false);
-      break;
-    case _SETTING:
-      oled_write_ln("Set", false);
       break;
     case _NUMFUNC:
       oled_write_ln("Num", false);
@@ -527,33 +516,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
   // tri layer setup and custom keycodes
   switch (keycode) {
-  case LOWER:
-    if (record->event.pressed) {
-      layer_on(_SYMB);
-      update_tri_layer(_SYMB, _NAV, _SETTING);
-    } else {
-      layer_off(_SYMB);
-      update_tri_layer(_SYMB, _NAV, _SETTING);
-    }
-    return false;
-  case RAISE:
-    if (record->event.pressed) {
-      layer_on(_NAV);
-      update_tri_layer(_SYMB, _NAV, _SETTING);
-    } else {
-      layer_off(_NAV);
-      update_tri_layer(_SYMB, _NAV, _SETTING);
-    }
-    return false;
-  case ADJUST:
-    if (record->event.pressed) {
-      layer_on(_SETTING);
-      update_tri_layer(_SYMB, _NAV, _SETTING);
-    } else {
-      layer_off(_SETTING);
-      update_tri_layer(_SYMB, _NAV, _SETTING);
-    }
-    return false;
   case ALT_TAB: // super alt tab macro
     if (record->event.pressed) {
       if (!is_alt_tab_active) {
